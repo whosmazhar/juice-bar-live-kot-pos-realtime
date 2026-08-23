@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<title>The Juice Bar • FUTURE MENU</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070b12; --bg2:#0b1220; --surface:rgba(15,24,38,.82);
+  --surface2:rgba(19,31,48,.92); --text:#f4f8ff; --muted:#8ea0b8;
+  --cyan:#F8BE03; --lime:#b7ff4a; --pink:#ff3cac; --purple:#7c4dff;
+  --line:rgba(120,170,210,.18); --danger:#ff5577; --orange:#F8BE03;
+  --glow:0 0 28px rgba(248,190,3,.18);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+ margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+ background:
+ radial-gradient(circle at 10% -10%,rgba(248,190,3,.14),transparent 30%),
+ radial-gradient(circle at 100% 0%,rgba(255,60,172,.13),transparent 30%),
+ linear-gradient(180deg,var(--bg),var(--bg2) 55%,#060a11);
+ color:var(--text);min-height:100vh;
+}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:28px 28px}
+.disp{font-family:Orbitron,system-ui,sans-serif;letter-spacing:.02em}
+.mono{font-family:"IBM Plex Mono",monospace}
+button,input{font-family:inherit}button{cursor:pointer;border:none}
+.scroll::-webkit-scrollbar{height:4px;width:4px}.scroll::-webkit-scrollbar-thumb{background:#27415a;border-radius:99px}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(248,190,3,.18)}50%{box-shadow:0 0 0 10px rgba(248,190,3,0)}}
+.pop{animation:pop .25s ease}.rise{animation:rise .35s ease both}
+
+.hero{
+ position:relative;overflow:hidden;text-align:center;padding:34px 18px 28px;
+ background:linear-gradient(135deg,rgba(7,15,27,.97),rgba(14,21,39,.9));
+ border-bottom:1px solid var(--line);
+}
+.hero:after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:var(--cyan);filter:blur(80px);opacity:.13;right:-70px;top:-80px}
+.hero-row{display:flex;align-items:center;justify-content:center;gap:10px;position:relative;z-index:1}
+.hero h1{font-size:clamp(25px,7vw,40px);margin:0;font-weight:800;color:#fff}
+.hero p{color:#9eb0c7;font-size:13px;margin:8px 0 0;position:relative;z-index:1}
+.hero .hero-row svg{filter:drop-shadow(0 0 8px var(--cyan))}
+
+.catnav{
+ position:sticky;top:0;z-index:20;display:flex;gap:8px;overflow-x:auto;
+ padding:10px 12px;background:rgba(7,11,18,.86);backdrop-filter:blur(18px);
+ border-bottom:1px solid var(--line)
+}
+.pill{
+ white-space:nowrap;padding:9px 14px;border-radius:999px;font-size:12px;font-weight:700;
+ background:rgba(18,30,46,.8);color:#b7c6d9;border:1px solid var(--line)
+}
+.pill.active{
+ color:#031218;background:linear-gradient(90deg,var(--cyan),#FFD54A);
+ border-color:var(--cyan);box-shadow:0 0 18px rgba(248,190,3,.2)
+}
+
+.menu-wrap{width:100%;max-width:560px;margin:0 auto;padding:14px 12px 100px}
+.cat-block{margin-bottom:26px;scroll-margin-top:62px}
+.cat-title{display:flex;align-items:center;gap:8px;margin:20px 2px 10px}
+.cat-title h2{font-size:16px;margin:0;color:#e9f3ff}
+.cat-title svg{filter:drop-shadow(0 0 7px var(--lime))}
+.item{
+ background:linear-gradient(145deg,rgba(18,29,45,.92),rgba(11,19,31,.9));
+ border:1px solid var(--line);border-radius:18px;padding:10px;
+ display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px;
+ box-shadow:0 8px 24px rgba(0,0,0,.16);transition:.2s
+}
+.item:active{transform:scale(.985);border-color:rgba(248,190,3,.38)}
+@keyframes itemAdded{0%{transform:scale(1);box-shadow:0 8px 24px rgba(0,0,0,.16)}25%{transform:scale(1.025);box-shadow:0 0 28px rgba(248,190,3,.45),0 8px 24px rgba(0,0,0,.16)}55%{transform:scale(.985)}100%{transform:scale(1);box-shadow:0 8px 24px rgba(0,0,0,.16)}}
+@keyframes addButtonPop{0%{transform:scale(1);filter:brightness(1)}35%{transform:scale(1.22);filter:brightness(1.5)}70%{transform:scale(.92)}100%{transform:scale(1);filter:brightness(1)}}
+@keyframes cartBadgePop{0%{transform:scale(.5);opacity:.5}55%{transform:scale(1.35)}100%{transform:scale(1);opacity:1}}
+
+/* Product -> Cart/Checkout flight animation */
+.fly-to-checkout{
+  position:fixed;
+  width:58px;
+  height:58px;
+  border-radius:15px;
+  object-fit:cover;
+  z-index:10000;
+  pointer-events:none;
+  opacity:1;
+  box-shadow:
+    0 0 12px rgba(248,190,3,.85),
+    0 0 30px rgba(124,77,255,.45);
+  border:1px solid rgba(255,255,255,.18);
+  transform-origin:center;
+  transition:
+    left 1.3s cubic-bezier(.22,.8,.2,1),
+    top 1.3s cubic-bezier(.22,.8,.2,1),
+    transform 1.3s cubic-bezier(.22,.8,.2,1),
+    opacity 1.3s ease;
+}
+.fly-to-checkout:after{
+  content:"";
+  position:absolute;
+  inset:-10px;
+  border-radius:20px;
+  border:2px solid rgba(248,190,3,.18);
+  filter:blur(2px);
+}
+@keyframes checkoutImpact{
+  0%{transform:scale(1);box-shadow:0 0 0 0 rgba(248,190,3,0),0 0 22px rgba(248,190,3,.15)}
+  30%{transform:scale(1.035);box-shadow:0 0 0 8px rgba(248,190,3,.12),0 0 34px rgba(248,190,3,.42)}
+  60%{transform:scale(.992);box-shadow:0 0 0 16px rgba(248,190,3,0),0 0 20px rgba(124,77,255,.28)}
+  100%{transform:scale(1);box-shadow:0 0 0 0 rgba(248,190,3,0),0 0 0 rgba(248,190,3,0)}
+}
+.checkout-impact{
+  animation:checkoutImpact .62s cubic-bezier(.2,.8,.2,1);
+}
+@keyframes trailPulse{
+  0%{opacity:.75;transform:scale(.6)}
+  100%{opacity:0;transform:scale(1.8)}
+}
+.fly-trail{
+  position:fixed;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:9998;
+  background:var(--cyan);
+  box-shadow:0 0 12px rgba(248,190,3,.85),0 0 24px rgba(124,77,255,.45);
+  animation:trailPulse .55s ease-out forwards;
+}
+
+.item.added{animation:itemAdded .5s cubic-bezier(.2,.8,.2,1)}
+.addbtn.added,.stepbtn.dark.added{animation:addButtonPop .42s cubic-bezier(.2,.8,.2,1)}
+@keyframes itemRemoved{0%{transform:scale(1);box-shadow:0 8px 24px rgba(0,0,0,.16)}25%{transform:scale(.975);box-shadow:0 0 22px rgba(255,85,119,.4),0 8px 24px rgba(0,0,0,.16)}55%{transform:scale(1.008)}100%{transform:scale(1);box-shadow:0 8px 24px rgba(0,0,0,.16)}}
+@keyframes subButtonPop{0%{transform:scale(1);filter:brightness(1)}35%{transform:scale(.8);filter:brightness(1.35) saturate(1.4)}70%{transform:scale(1.08)}100%{transform:scale(1);filter:brightness(1)}}
+.item.removed{animation:itemRemoved .42s cubic-bezier(.2,.8,.2,1)}
+.stepbtn.removed{animation:subButtonPop .38s cubic-bezier(.2,.8,.2,1);border-color:rgba(255,85,119,.5)!important}
+.cupbtn.added{animation:pulse .9s ease-in-out 1,cartPop .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes cartPop{0%{transform:scale(1)}35%{transform:scale(1.18) rotate(-4deg)}65%{transform:scale(.95) rotate(3deg)}100%{transform:scale(1) rotate(0)}}
+.cupbadge.added{animation:cartBadgePop .4s ease-out}
+.item-left{display:flex;align-items:center;gap:11px;min-width:0}
+.item-thumb{width:88px;height:88px;border-radius:17px;overflow:hidden;flex-shrink:0;background:#111c2b;border:1px solid rgba(255,255,255,.08);box-shadow:var(--glow)}
+.item-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.edit-thumb{width:44px;height:44px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#111c2b}
+.edit-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.upload-label{font-size:11px;color:var(--muted);cursor:pointer;border:1px solid var(--line);border-radius:8px;padding:6px 8px;white-space:nowrap}
+.item-name{font-weight:750;margin:0 0 3px;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-desc{font-size:11px;color:var(--muted);margin:0 0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:235px}
+.item-price{font-size:14px;color:var(--lime);font-weight:800;margin:0}
+.addbtn{
+ flex-shrink:0;width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,var(--cyan),#C98A00);
+ display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px rgba(248,190,3,.22)
+}
+.stepper{flex-shrink:0;display:flex;align-items:center;gap:6px;background:#0a1421;border:1px solid var(--line);border-radius:999px;padding:4px}
+.stepbtn{width:31px;height:31px;border-radius:999px;background:#17263a;border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+.stepbtn.dark{background:linear-gradient(135deg,var(--cyan),#C98A00);border-color:transparent}
+.stepqty{width:16px;text-align:center;color:#fff}
+.staffbtn{display:block;margin:10px auto 0;font-size:11px;color:#62758d;background:none}
+
+.cupbtn{position:fixed;bottom:18px;right:16px;z-index:30;filter:drop-shadow(0 10px 24px rgba(0,0,0,.5));animation:pulse 2.2s infinite}
+.cupbadge{position:absolute;top:-4px;right:-4px;width:22px;height:22px;border-radius:999px;background:var(--pink);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px rgba(255,60,172,.5)}
+
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.7);backdrop-filter:blur(5px);display:flex;align-items:flex-end;justify-content:center}
+.drawer{
+ width:100%;max-width:560px;background:linear-gradient(180deg,#111d2d,#09121e);
+ border:1px solid var(--line);border-bottom:none;border-radius:25px 25px 0 0;padding:18px 18px 92px;
+ max-height:88vh;overflow-y:auto;box-shadow:0 -15px 50px rgba(0,0,0,.45)
+}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.drawer-head button{background:none;color:#9fb0c4}
+.cart-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05)}
+.cart-input{width:100%;border:1px solid var(--line);background:#091523;color:#fff;border-radius:13px;padding:12px 14px;font-size:13px;margin-bottom:8px;outline:none}
+.cart-input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(248,190,3,.08)}
+.cart-total{display:flex;justify-content:space-between;align-items:center;margin:16px 0;font-weight:700}
+.checkout-fixed{
+  position:fixed;
+  left:14px;
+  bottom:14px;
+  z-index:70;
+  width:min(360px,calc(100vw - 28px));
+  min-height:58px;
+  padding:10px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  border-radius:16px;
+  background:linear-gradient(135deg,rgba(10,24,40,.97),rgba(12,29,47,.95));
+  border:1px solid rgba(248,190,3,.38);
+  box-shadow:0 10px 35px rgba(0,0,0,.5),0 0 24px rgba(248,190,3,.12);
+  backdrop-filter:blur(16px);
+}
+.checkout-fixed .checkout-summary{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  min-width:0;
+}
+.checkout-fixed .checkout-label{
+  font-size:10px;
+  color:#7f93ab;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-weight:800;
+}
+.checkout-fixed .checkout-total{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:18px;
+  color:#fff;
+  font-weight:800;
+  white-space:nowrap;
+}
+.checkout-fixed .checkout-count{
+  font-size:11px;
+  color:#91a5bb;
+  white-space:nowrap;
+}
+.checkout-fixed .checkout-open{
+  flex:0 0 auto;
+  padding:12px 16px;
+  border-radius:12px;
+  background:linear-gradient(90deg,var(--cyan),#C98A00);
+  color:#031218;
+  font-weight:900;
+  box-shadow:0 0 18px rgba(248,190,3,.2);
+}
+.checkout-fixed .checkout-open:active{transform:scale(.97)}
+.checkout-fixed.empty .checkout-open{opacity:.62}
+@keyframes checkoutAlwaysGlow{
+  0%,100%{box-shadow:0 10px 35px rgba(0,0,0,.5),0 0 18px rgba(248,190,3,.08)}
+  50%{box-shadow:0 10px 35px rgba(0,0,0,.5),0 0 28px rgba(248,190,3,.18)}
+}
+.checkout-fixed{animation:checkoutAlwaysGlow 2.8s ease-in-out infinite}
+.checkoutbtn{width:100%;padding:15px 18px;border-radius:14px;background:linear-gradient(90deg,var(--cyan),#C98A00);color:#031218;font-weight:900;box-shadow:0 0 22px rgba(248,190,3,.18)}
+.checkoutbtn:disabled{opacity:.6}
+
+
+
+/* Live customer order tracking */
+.track-wrap{
+  min-height:100vh;
+  padding:28px 16px 34px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 15% 8%,rgba(248,190,3,.11),transparent 30%),
+    radial-gradient(circle at 90% 12%,rgba(255,60,172,.10),transparent 28%),
+    linear-gradient(180deg,#070b12,#09121e);
+}
+.track-card{
+  width:100%;
+  max-width:520px;
+  background:linear-gradient(145deg,rgba(16,28,44,.96),rgba(8,17,28,.97));
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:20px;
+  box-shadow:0 20px 55px rgba(0,0,0,.42),0 0 34px rgba(248,190,3,.08);
+}
+.track-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.track-kicker{font-size:10px;color:var(--cyan);font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.track-title{font-size:22px;margin:4px 0 0;color:#fff}
+.track-code{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:13px;color:#9db0c5;margin:4px 0 0
+}
+.track-live{
+  padding:7px 10px;border-radius:999px;background:rgba(248,190,3,.09);
+  border:1px solid rgba(248,190,3,.25);color:var(--cyan);font-size:10px;font-weight:900;
+  animation:pulse 2s infinite;
+}
+.track-current{
+  margin:18px 0;
+  padding:14px;
+  border:1px solid rgba(248,190,3,.18);
+  border-radius:16px;
+  background:rgba(248,190,3,.045);
+}
+.track-current-label{font-size:10px;color:#7f93ab;text-transform:uppercase;font-weight:800}
+.track-current-status{font-family:Orbitron,system-ui,sans-serif;font-size:20px;color:#fff;margin-top:5px}
+.track-steps{margin-top:18px}
+.track-step{
+  display:grid;grid-template-columns:34px 1fr;gap:12px;position:relative;padding-bottom:22px;
+}
+.track-step:last-child{padding-bottom:0}
+.track-step:not(:last-child):before{
+  content:"";position:absolute;left:16px;top:34px;bottom:0;width:2px;background:#1b2c3e
+}
+.track-step.done:not(:last-child):before,
+.track-step.active:not(:last-child):before{
+  background:linear-gradient(180deg,var(--cyan),rgba(248,190,3,.2));
+}
+.track-dot{
+  width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  background:#0c1725;border:1px solid var(--line);color:#61758c;font-size:12px;font-weight:900;z-index:1
+}
+.track-step.done .track-dot{
+  color:#031218;background:linear-gradient(135deg,var(--cyan),#C98A00);
+  border-color:transparent;box-shadow:0 0 18px rgba(248,190,3,.22)
+}
+.track-step.active .track-dot{
+  color:#031218;background:linear-gradient(135deg,var(--lime),#76d92e);
+  border-color:transparent;box-shadow:0 0 22px rgba(183,255,74,.2);
+  animation:cartPop .65s ease-in-out infinite alternate
+}
+.track-step-title{font-weight:800;color:#fff;margin:2px 0 3px}
+.track-step-sub{font-size:11px;color:#7f93ab;line-height:1.45}
+.track-footer{
+  margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06);
+  display:flex;gap:8px;flex-wrap:wrap
+}
+.track-btn{
+  flex:1;min-width:140px;padding:11px 13px;border-radius:12px;font-size:12px;font-weight:900;
+  background:#13263a;color:#fff;border:1px solid var(--line)
+}
+.track-btn.primary{
+  background:linear-gradient(90deg,var(--cyan),#C98A00);color:#031218;border-color:transparent
+}
+
+.confirm-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.confirm-card{max-width:400px;width:100%;text-align:center}
+.checkcircle{width:82px;height:82px;border-radius:24px;background:linear-gradient(135deg,var(--cyan),#C98A00);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 35px rgba(248,190,3,.25)}
+.receipt{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;text-align:left;margin-bottom:24px}
+.receipt-row{display:flex;justify-content:space-between;font-size:13px;padding:5px 0}
+.receipt-total{display:flex;justify-content:space-between;padding-top:10px;margin-top:8px;border-top:1px dashed var(--line);font-weight:700}
+.newbtn{background:#15253a;color:#fff;font-weight:700;padding:12px 24px;border-radius:13px;border:1px solid var(--line)}
+
+.pin-wrap{min-height:100vh;background:radial-gradient(circle at 50% 20%,rgba(248,190,3,.12),transparent 35%),#070b12;display:flex;align-items:center;justify-content:center;padding:24px}
+.pin-card{max-width:310px;width:100%;text-align:center}
+.backlink{display:flex;align-items:center;gap:4px;color:#8ea0b8;font-size:13px;background:none;margin-bottom:32px}
+.lockcircle{width:62px;height:62px;border-radius:18px;background:rgba(248,190,3,.08);border:1px solid rgba(248,190,3,.2);margin:0 auto 20px;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow)}
+.pin-card h2{color:#fff;font-size:23px;margin:0 0 5px}.pin-card p{color:#8295ad;font-size:13px;margin:0 0 24px}
+.pin-input{width:100%;text-align:center;font-size:24px;letter-spacing:.5em;padding:13px;border-radius:13px;background:#0c1725;color:#fff;border:1px solid var(--line);outline:none;margin-bottom:12px}
+.pin-input.err{border-color:var(--danger)}.pin-err{color:var(--danger)!important;font-size:13px!important;margin:0 0 12px!important}
+.unlockbtn{width:100%;background:linear-gradient(90deg,var(--cyan),#C98A00);color:#031218;font-weight:900;padding:13px;border-radius:13px}
+
+.admin-head{background:rgba(8,14,23,.95);border-bottom:1px solid var(--line);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:30;backdrop-filter:blur(15px)}
+.admin-head h1{color:#fff;font-size:16px;margin:0}.exitbtn{color:#8ea0b8;font-size:12px;background:none;display:flex;align-items:center;gap:4px}
+.admin-body{max-width:1080px;margin:0 auto;padding:16px 12px 30px}
+.tabs{display:flex;gap:7px;margin-bottom:18px;overflow:auto}.tab{font-size:12px;padding:9px 13px;border-radius:10px;background:#0d1827;color:#91a3ba;border:1px solid var(--line);font-weight:700;display:flex;align-items:center;gap:6px;white-space:nowrap}.tab.active{background:rgba(248,190,3,.1);color:var(--cyan);border-color:rgba(248,190,3,.35)}
+.badge{padding:5px 9px;border-radius:999px;font-size:10px;font-weight:800;color:#fff}
+.orders-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:640px){.orders-grid{grid-template-columns:1fr 1fr}.menu-wrap{padding-left:18px;padding-right:18px}}
+@media(min-width:960px){.orders-grid{grid-template-columns:1fr 1fr 1fr}}
+
+/* KOT / POS */
+.kot-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:700px){.kot-grid{grid-template-columns:1fr 1fr}}
+.kot-card{
+  background:linear-gradient(145deg,rgba(18,29,45,.96),rgba(8,17,28,.96));
+  border:1px solid rgba(255,165,0,.22);border-radius:18px;padding:15px;
+  box-shadow:0 10px 28px rgba(0,0,0,.2);
+}
+.kot-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:11px}
+.kot-code{font-family:"IBM Plex Mono",monospace;font-size:20px;font-weight:800;margin:0;color:#fff}
+.kot-meta{font-size:11px;color:#7f93ab;margin:3px 0 0}
+.kot-label{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;font-size:10px;font-weight:900;background:rgba(255,165,0,.1);color:#ffb24d;border:1px solid rgba(255,165,0,.25)}
+.kot-items{border-top:1px dashed rgba(255,255,255,.09);border-bottom:1px dashed rgba(255,255,255,.09);padding:10px 0;margin:8px 0}
+.kot-item{display:flex;justify-content:space-between;gap:12px;padding:5px 0;font-size:14px}
+.kot-item strong{color:#fff}
+.kot-note{font-size:11px;color:#ffb24d;margin-top:7px}
+.kot-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.kot-btn{
+  padding:8px 11px;border-radius:10px;font-size:11px;font-weight:900;
+  background:#14263a;color:#fff;border:1px solid var(--line)
+}
+.kot-btn.primary{background:linear-gradient(90deg,var(--cyan),#C98A00);color:#031218;border-color:transparent}
+.kot-btn.success{background:linear-gradient(90deg,#8cff66,var(--lime));color:#071009;border-color:transparent}
+
+.pos-shell{display:grid;grid-template-columns:1fr;gap:14px}
+@media(min-width:900px){.pos-shell{grid-template-columns:1.2fr .8fr}}
+.pos-panel{
+  background:linear-gradient(145deg,rgba(18,29,45,.96),rgba(9,17,28,.96));
+  border:1px solid var(--line);border-radius:18px;padding:15px;
+}
+.pos-title{font-size:14px;font-weight:900;margin:0 0 12px}
+.pos-order-card{padding:12px;border:1px solid rgba(255,255,255,.06);border-radius:13px;margin-bottom:8px;background:rgba(255,255,255,.02)}
+.pos-order-head{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.pos-order-total{font-family:"IBM Plex Mono",monospace;color:var(--lime);font-weight:900}
+.pos-pay-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.pos-pay-btn{
+  padding:10px;border-radius:10px;background:#0f2033;color:#aebed0;border:1px solid var(--line);
+  font-size:11px;font-weight:800
+}
+.pos-pay-btn.active{background:rgba(248,190,3,.11);border-color:rgba(248,190,3,.4);color:var(--cyan)}
+.pos-paid{
+  display:inline-flex;padding:5px 8px;border-radius:999px;background:rgba(183,255,74,.09);
+  color:var(--lime);font-size:10px;font-weight:900;border:1px solid rgba(183,255,74,.2)
+}
+.pos-unpaid{
+  display:inline-flex;padding:5px 8px;border-radius:999px;background:rgba(255,85,119,.08);
+  color:#ff7793;font-size:10px;font-weight:900;border:1px solid rgba(255,85,119,.2)
+}
+.pos-receipt{
+  margin-top:12px;padding-top:12px;border-top:1px dashed rgba(255,255,255,.08)
+}
+.pos-receipt-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;color:#aebed0}
+.pos-receipt-total{display:flex;justify-content:space-between;font-size:17px;padding-top:8px;margin-top:6px;border-top:1px solid rgba(255,255,255,.08);font-weight:900;color:#fff}
+.kot-empty,.pos-empty{padding:44px 10px;text-align:center;color:var(--muted)}
+
+.order-card,.stat-card,.topbox{background:linear-gradient(145deg,rgba(18,29,45,.92),rgba(10,18,29,.9));border:1px solid var(--line);border-radius:17px;padding:15px;box-shadow:0 8px 25px rgba(0,0,0,.14)}
+.order-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}.order-code{font-size:18px;margin:0}.order-name{font-size:11px;color:var(--muted);margin:2px 0 0}.order-item{font-size:13px;color:#b7c7d9;margin:3px 0}.order-note{font-size:11px;color:var(--muted);font-style:italic;margin-top:5px}.order-foot{display:flex;justify-content:space-between;align-items:center;margin-top:11px}.order-total{font-weight:800;color:var(--lime)}.cancelbtn{font-size:11px;color:#77899e;background:none;padding:6px 8px}.advancebtn{font-size:11px;font-weight:800;background:#14263a;color:#fff;padding:7px 10px;border-radius:9px;border:1px solid var(--line)}
+.empty{text-align:center;padding:60px 0;color:var(--muted)}
+.stat-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.stat-label{font-size:11px;color:var(--muted);margin:0 0 4px}.stat-value{font-size:28px;margin:0;color:#fff}.topbox h3{margin:0 0 16px}.toprow{margin-bottom:13px}.toprow-label{display:flex;justify-content:space-between;font-size:12px;color:#b8c8d9;margin-bottom:5px}.barbg{height:7px;background:#0a1421;border-radius:999px}.barfg{height:7px;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:999px;box-shadow:0 0 10px rgba(248,190,3,.2)}
+.menu-editor .cat-h{font-size:17px;margin:0}.edit-item{background:#0d1827;border:1px solid var(--line);border-radius:12px;padding:9px;display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-bottom:8px}.edit-item input[type=text],.edit-item input[type=number]{border:1px solid var(--line);background:#08121f;color:#fff;border-radius:8px;padding:7px 8px;font-size:12px}.stockLabel{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}.savebar{position:sticky;top:62px;z-index:10;background:#102235;border:1px solid rgba(248,190,3,.3);border-radius:12px;padding:11px 13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;font-size:12px}.savebtn{font-size:12px;font-weight:800;background:var(--cyan);color:#031218;padding:7px 14px;border-radius:9px}.addbox{background:#0d1827;border:1px dashed #31506b;border-radius:12px;padding:15px;margin-top:18px}.addbox p{font-weight:700;font-size:13px;margin:0 0 12px}.addbox input{border:1px solid var(--line);background:#08121f;color:#fff;border-radius:8px;padding:7px 8px;font-size:12px}.addrow{display:flex;flex-wrap:wrap;gap:7px}.addgo{font-weight:800;font-size:12px;background:linear-gradient(90deg,var(--cyan),#C98A00);color:#031218;padding:8px 13px;border-radius:9px;display:flex;align-items:center;gap:4px}
+.cathead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px}.movebtns{display:flex;gap:4px;flex-shrink:0}.movebtn{width:26px;height:26px;display:flex;align-items:center;justify-content:center;background:#0d1827;border:1px solid var(--line);border-radius:7px;color:#fff;font-size:12px;line-height:1;flex-shrink:0}.movebtn:disabled{opacity:.25;cursor:default}.movebtn:not(:disabled):active{border-color:var(--cyan)}.movebtn.sm{width:24px;height:24px}.catlabel{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.03em}
+
+@media(max-width:480px){
+  .checkout-fixed{
+    left:10px;
+    bottom:10px;
+    width:calc(100vw - 20px);
+    min-height:56px;
+    padding:9px 10px;
+  }
+  .checkout-fixed .checkout-open{
+    padding:11px 14px;
+    font-size:12px;
+  }
+
+ .hero{padding-top:28px}.menu-wrap{padding-top:8px}.item{padding:9px}.item-thumb{width:78px;height:78px}.item-desc{max-width:180px}
+ .item-name{font-size:13px}.addbtn{width:40px;height:40px}.stepbtn{width:29px;height:29px}
+ .admin-head h1{font-size:14px}.admin-body{padding:12px 10px 28px}
+}
+@media(min-width:700px){.hero{padding:42px 24px 32px}.menu-wrap{max-width:680px}.item{padding:13px}.item-thumb{width:96px;height:96px}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+/* ---------------- realtime ---------------- */
+// If this file is opened directly (file://) instead of via the running
+// server, /socket.io/socket.io.js won't load and `io` won't exist.
+// Fall back to a no-op stub so the app still renders in local-only mode
+// instead of crashing with a blank page.
+const socket = (typeof io === "function") ? io() : {
+  on(){}, emit(){}, connected:false
+};
+let realtimeConnected = false;
+socket.on("connect",()=>{
+  realtimeConnected=true;
+  socket.emit("orders:request");
+  socket.emit("menu:request");
+  if(state.staffToken && !state.staffUser){
+    socket.emit("staff:whoami", {token: state.staffToken}, (res)=>{
+      if(res && res.ok){ state.staffUser = res.user; if(state.view==="admin") render(); }
+      else { state.staffToken = null; localStorage.removeItem("jb_staff_token"); if(state.view==="admin"){ state.view="pin"; render(); } }
+    });
+  }
+});
+socket.on("disconnect",()=>{ realtimeConnected=false; });
+socket.on("orders:snapshot",(orders)=>{ state.orders = orders || []; syncTrackedOrder(); render(); });
+socket.on("order:update",(order)=>{ upsertRealtimeOrder(order); });
+socket.on("orders:updated",(orders)=>{ state.orders = orders || []; syncTrackedOrder(); render(); });
+
+// The server is the source of truth for the menu once this device has
+// synced. If the server has nothing yet (a brand-new database) but this
+// browser has a customized menu cached locally (e.g. items with real
+// photos added via the Menu editor), push that local copy up once so
+// every device — including ones that never touched this browser's
+// storage — sees the same menu going forward.
+let menuSyncedFromServer = false;
+socket.on("menu:snapshot",(menu)=>{
+  if(Array.isArray(menu) && menu.length){
+    state.menu = menu;
+    localStorage.setItem("jb_menu", JSON.stringify(menu));
+    localStorage.setItem("jb_menu_version", String(MENU_VERSION));
+    menuSyncedFromServer = true;
+    render();
+  } else if(!menuSyncedFromServer && realtimeConnected){
+    // Server has no menu yet — seed it from whatever this browser has
+    // locally (this is the one-time migration for the counter PC).
+    menuSyncedFromServer = true;
+    socket.emit("menu:update", state.menu);
+  }
+});
+
+/* ---------------- data ---------------- */
+const DEFAULT_MENU = [
+  {id:"ic1",category:"আইসক্রিম আইটেম",name:"বেনানা স্প্লিট",desc:"",price:150,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjYw8L3RleHQ+PC9zdmc+"},
+  {id:"ic2",category:"আইসক্রিম আইটেম",name:"থ্রী ইন ওয়ান আইসক্রীম",desc:"",price:120,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjag8L3RleHQ+PC9zdmc+"},
+  {id:"ic3",category:"আইসক্রিম আইটেম",name:"টুটি ফ্রুটি",desc:"",price:130,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjac8L3RleHQ+PC9zdmc+"},
+  {id:"ic4",category:"আইসক্রিম আইটেম",name:"সানডি",desc:"",price:120,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjag8L3RleHQ+PC9zdmc+"},
+  {id:"ic5",category:"আইসক্রিম আইটেম",name:"রকি রোড",desc:"",price:130,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjas8L3RleHQ+PC9zdmc+"},
+  {id:"ic6",category:"আইসক্রিম আইটেম",name:"চকলেট চিপস",desc:"",price:140,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjas8L3RleHQ+PC9zdmc+"},
+  {id:"ic7",category:"আইসক্রিম আইটেম",name:"হানি মুন",desc:"",price:110,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfja88L3RleHQ+PC9zdmc+"},
+  {id:"ic8",category:"আইসক্রিম আইটেম",name:"আইস কাপ টু",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjaY8L3RleHQ+PC9zdmc+"},
+  {id:"ic9",category:"আইসক্রিম আইটেম",name:"আইস কাপ ওয়ান",desc:"",price:60,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjaY8L3RleHQ+PC9zdmc+"},
+  {id:"ic10",category:"আইসক্রিম আইটেম",name:"ম্যাংগো গ্রেনা",desc:"",price:110,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfpa08L3RleHQ+PC9zdmc+"},
+  {id:"ic11",category:"আইসক্রিম আইটেম",name:"আইসক্রীম সোডা",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfpaQ8L3RleHQ+PC9zdmc+"},
+  {id:"mk1",category:"মিল্কশেক আইটেম",name:"ওরিও মিল্কশেক",desc:"",price:110,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjao8L3RleHQ+PC9zdmc+"},
+  {id:"mk2",category:"মিল্কশেক আইটেম",name:"ভ্যানিলা মিল্কশেক",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfpZs8L3RleHQ+PC9zdmc+"},
+  {id:"mk3",category:"মিল্কশেক আইটেম",name:"স্ট্রবেরী মিল্কশেক",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjZM8L3RleHQ+PC9zdmc+"},
+  {id:"mk4",category:"মিল্কশেক আইটেম",name:"ম্যাংগো মিল্কশেক",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfpa08L3RleHQ+PC9zdmc+"},
+  {id:"mk5",category:"মিল্কশেক আইটেম",name:"চকলেট মিল্কশেক",desc:"",price:90,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjas8L3RleHQ+PC9zdmc+"},
+  {id:"fl1",category:"ফালুদা আইটেম",name:"স্পেশাল ফালুদা",desc:"",price:100,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjac8L3RleHQ+PC9zdmc+"},
+  {id:"fl2",category:"ফালুদা আইটেম",name:"ভিআইপি স্পেশাল ফালুদা",desc:"",price:110,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjac8L3RleHQ+PC9zdmc+"},
+  {id:"fl3",category:"ফালুদা আইটেম",name:"দই চিড়া",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfpaM8L3RleHQ+PC9zdmc+"},
+  {id:"ls1",category:"লাচ্ছি আইটেম",name:"ভিআইপি স্পেশাল লাচ্ছি",desc:"",price:70,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfpZs8L3RleHQ+PC9zdmc+"},
+  {id:"ls2",category:"লাচ্ছি আইটেম",name:"এরাবিয়ান স্পেশাল লাচ্ছি",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfpZs8L3RleHQ+PC9zdmc+"},
+  {id:"ls3",category:"লাচ্ছি আইটেম",name:"ম্যাংগো স্পেশাল লাচ্ছি",desc:"",price:90,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfpa08L3RleHQ+PC9zdmc+"},
+  {id:"cc1",category:"কোল্ড কফি আইটেম",name:"চকলেট কোল্ড কফি",desc:"",price:90,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKYlTwvdGV4dD48L3N2Zz4="},
+  {id:"cc2",category:"কোল্ড কফি আইটেম",name:"ম্যাংগো কোল্ড কফি",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKYlTwvdGV4dD48L3N2Zz4="},
+  {id:"cc3",category:"কোল্ড কফি আইটেম",name:"ভ্যানিলা কোল্ড কফি",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKYlTwvdGV4dD48L3N2Zz4="},
+  {id:"cc4",category:"কোল্ড কফি আইটেম",name:"স্ট্রবেরী কোল্ড কফি",desc:"",price:90,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKYlTwvdGV4dD48L3N2Zz4="},
+  {id:"cc5",category:"কোল্ড কফি আইটেম",name:"ভিআইপি স্পেশাল কোল্ড কফি",desc:"",price:100,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPuKYlTwvdGV4dD48L3N2Zz4="},
+  {id:"jc1",category:"সিজনাল ফ্রুট জুস",name:"আপেল জুস",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjY48L3RleHQ+PC9zdmc+"},
+  {id:"jc2",category:"সিজনাল ফ্রুট জুস",name:"মাল্টা জুস",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjYo8L3RleHQ+PC9zdmc+"},
+  {id:"jc3",category:"সিজনাল ফ্রুট জুস",name:"অরেঞ্জ জুস",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjYo8L3RleHQ+PC9zdmc+"},
+  {id:"jc4",category:"সিজনাল ফ্রুট জুস",name:"স্পেশাল ম্যাংগো জুস",desc:"",price:90,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfpa08L3RleHQ+PC9zdmc+"},
+  {id:"jc5",category:"সিজনাল ফ্রুট জুস",name:"বেনানা জুস",desc:"",price:60,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjYw8L3RleHQ+PC9zdmc+"},
+  {id:"jc6",category:"সিজনাল ফ্রুট জুস",name:"নাসপাতি জুস",desc:"",price:100,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjZA8L3RleHQ+PC9zdmc+"},
+  {id:"jc7",category:"সিজনাল ফ্রুট জুস",name:"পাইন আপেল জুস",desc:"",price:90,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjY08L3RleHQ+PC9zdmc+"},
+  {id:"jc8",category:"সিজনাল ফ্রুট জুস",name:"তরমুজ জুস",desc:"",price:100,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjYk8L3RleHQ+PC9zdmc+"},
+  {id:"jc9",category:"সিজনাল ফ্রুট জুস",name:"পেপে জুস",desc:"",price:100,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjYg8L3RleHQ+PC9zdmc+"},
+  {id:"jc10",category:"সিজনাল ফ্রুট জুস",name:"বেল জুস",desc:"",price:100,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfp4M8L3RleHQ+PC9zdmc+"},
+  {id:"jc11",category:"সিজনাল ফ্রুট জুস",name:"ডালিম জুস",desc:"",price:110,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfp4M8L3RleHQ+PC9zdmc+"},
+  {id:"jc12",category:"সিজনাল ফ্রুট জুস",name:"আঙ্গুর জুস",desc:"",price:120,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjYc8L3RleHQ+PC9zdmc+"},
+  {id:"jc13",category:"সিজনাল ফ্রুট জুস",name:"মিক্সড জুস",desc:"",price:130,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfp4M8L3RleHQ+PC9zdmc+"},
+  {id:"jc14",category:"সিজনাল ফ্রুট জুস",name:"লেমন জুস",desc:"",price:25,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfjYs8L3RleHQ+PC9zdmc+"},
+  {id:"jc15",category:"সিজনাল ফ্রুট জুস",name:"কোকোনাট জুস",desc:"",price:80,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfpaU8L3RleHQ+PC9zdmc+"},
+  {id:"jc16",category:"সিজনাল ফ্রুট জুস",name:"ভিআইপি স্পেশাল জুস",desc:"",price:100,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfp4M8L3RleHQ+PC9zdmc+"},
+  {id:"jc17",category:"সিজনাল ফ্রুট জুস",name:"কোল্ড ফ্রুট সালাত",desc:"",price:110,available:true,image:"data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMTIyMDJmIi8+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIHJ4PSIyMiIgZmlsbD0idXJsKCNnKSIgZmlsbC1vcGFjaXR5PSIwLjM1Ii8+PGRlZnM+PHJhZGlhbEdyYWRpZW50IGlkPSJnIiBjeD0iNTAlIiBjeT0iMzUlIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiNGOEJFMDMiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxMjIwMmYiLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48dGV4dCB4PSI1MCIgeT0iNjYiIGZvbnQtc2l6ZT0iNTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPvCfpZc8L3RleHQ+PC9zdmc+"},
+];
+const CATEGORY_ORDER = ["আইসক্রিম আইটেম","মিল্কশেক আইটেম","ফালুদা আইটেম","লাচ্ছি আইটেম","কোল্ড কফি আইটেম","সিজনাল ফ্রুট জুস"];
+// Bump this whenever DEFAULT_MENU's items/categories change in code, so
+// browsers with an older cached menu (mismatched categories) auto-reset
+// to the new catalog instead of showing "The menu is being updated".
+const MENU_VERSION = 3;
+const STATUS_FLOW = ["pending","preparing","ready","completed"];
+const STATUS_LABEL = {pending:"New",preparing:"Preparing",ready:"Ready",completed:"Completed",cancelled:"Cancelled"};
+const STATUS_COLOR = {pending:"var(--orange)",preparing:"var(--pink)",ready:"var(--lime)",completed:"var(--ink)",cancelled:"#A3A79C"};
+
+/* ---------------- state ---------------- */
+let state = {
+  menu: loadMenu(),
+  orders: load("jb_orders", []),
+  cart: [],
+  view: "order",       // order | pin | admin
+  activeCat: null,
+  showCart: false,
+  confirmed: null,
+  pinError: false,
+  adminTab: "orders",
+  statusFilter: "active",
+  range: "today",
+  menuDraft: null,
+  categoryOrderDraft: null,
+  menuDirty: false,
+  posPaymentSelection: {},
+  trackingOrderId: null,
+  posNewOrder: null,
+  syncError: null,
+  staffUser: null,
+  staffToken: localStorage.getItem("jb_staff_token") || null,
+  staffList: null,
+  staffFormError: null,
+
+
+};
+
+function load(key, fallback){
+  try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; }
+}
+function loadMenu(){
+  try{
+    const storedVersion = Number(localStorage.getItem("jb_menu_version") || 0);
+    if(storedVersion !== MENU_VERSION){
+      // The bundled menu catalog changed since this browser last cached
+      // one (e.g. new items/categories shipped) — reset to the new
+      // default menu instead of showing a stale, category-mismatched cache.
+      localStorage.setItem("jb_menu", JSON.stringify(DEFAULT_MENU));
+      localStorage.setItem("jb_menu_version", String(MENU_VERSION));
+      return JSON.parse(JSON.stringify(DEFAULT_MENU));
+    }
+    const v = localStorage.getItem("jb_menu");
+    return v ? JSON.parse(v) : DEFAULT_MENU;
+  }catch(e){ return DEFAULT_MENU; }
+}
+function saveMenu(){
+  localStorage.setItem("jb_menu", JSON.stringify(state.menu));
+  localStorage.setItem("jb_menu_version", String(MENU_VERSION));
+}
+/* ---------------- category order ----------------
+   Category display order used to be a hardcoded constant (CATEGORY_ORDER).
+   Staff can now reorder categories from the Menu editor, so the actual
+   order is persisted separately and merged with whatever categories are
+   currently present in the menu (new/renamed categories get appended). */
+const CATEGORY_ORDER_KEY = "jb_category_order";
+function getCategoryOrder(menu){
+  const present = [...new Set((menu||[]).map(m=>m.category))];
+  let stored = null;
+  try{
+    const v = localStorage.getItem(CATEGORY_ORDER_KEY);
+    stored = v ? JSON.parse(v) : null;
+  }catch(e){ stored = null; }
+  const base = (Array.isArray(stored) && stored.length) ? stored : CATEGORY_ORDER;
+  const ordered = base.filter(c=>present.includes(c));
+  present.forEach(c=>{ if(!ordered.includes(c)) ordered.push(c); });
+  return ordered;
+}
+function saveCategoryOrder(order){
+  try{ localStorage.setItem(CATEGORY_ORDER_KEY, JSON.stringify(order)); }catch(e){}
+}
+function saveOrders(){ localStorage.setItem("jb_orders", JSON.stringify(state.orders)); }
+
+function upsertRealtimeOrder(order){
+  if(!order || !order.id) return;
+  const idx = state.orders.findIndex(x=>x.id===order.id);
+  if(idx === -1) state.orders.push(order);
+  else state.orders[idx] = order;
+  if(state.trackingOrderId === order.id){
+    state.confirmed = order;
+  }
+  // Keep customer tracking visible while the backend changes status.
+  if(state.confirmed && state.trackingOrderId === order.id){
+    render();
+  } else if(state.view === "admin" || state.view === "order"){
+    render();
+  }
+  localStorage.setItem("jb_orders", JSON.stringify(state.orders));
+}
+
+function syncToServer(order){
+  return new Promise((resolve,reject)=>{
+    if(!realtimeConnected){
+      reject(new Error("Realtime server is not connected."));
+      return;
+    }
+    socket.emit("order:create", order, (result)=>{
+      if(result && result.ok) resolve(result.order);
+      else reject(new Error(result?.error || "Could not create order."));
+    });
+  });
+}
+function updateServerOrderStatus(id,status){
+  if(!realtimeConnected) return;
+  socket.emit("order:status",{id,status});
+}
+function updateServerPayment(id,method){
+  if(!realtimeConnected) return;
+  socket.emit("order:payment",{id,method});
+}
+function createServerOrder(order){
+  if(!realtimeConnected) return;
+  socket.emit("order:create", order);
+}
+
+/* ---------------- POS: staff-created walk-in order ---------------- */
+function openPOSNewOrder(){
+  state.posNewOrder = { cart: [], customerName: "", notes: "" };
+  render();
+}
+function closePOSNewOrder(){
+  state.posNewOrder = null;
+  render();
+}
+function posChangeQty(item, delta){
+  if(!state.posNewOrder) return;
+  const cart = state.posNewOrder.cart;
+  const idx = cart.findIndex(c=>c.id===item.id);
+  if(idx === -1){ if(delta>0) cart.push({id:item.id,name:item.name,price:item.price,qty:1}); }
+  else{
+    const q = cart[idx].qty + delta;
+    if(q<=0) cart.splice(idx,1); else cart[idx].qty = q;
+  }
+  render();
+}
+function posCartSubtotal(){
+  if(!state.posNewOrder) return 0;
+  return state.posNewOrder.cart.reduce((s,c)=>s+c.price*c.qty,0);
+}
+function submitPOSOrder(){
+  if(!state.posNewOrder || state.posNewOrder.cart.length===0) return;
+  const order = {
+    id: newId(),
+    items: state.posNewOrder.cart,
+    notes: (state.posNewOrder.notes||"").trim(),
+    customerName: (state.posNewOrder.customerName||"").trim(),
+    total: posCartSubtotal(),
+    status: "pending",
+    createdAt: Date.now(),
+    paymentStatus: "unpaid"
+  };
+  state.orders.push(order);
+  saveOrders();
+  createServerOrder(order);
+  state.posNewOrder = null;
+  render();
+}
+function renderPOSNewOrderModal(){
+  const available = state.menu.filter(m=>m.available);
+  const cats = getCategoryOrder(state.menu).filter(c=>available.some(m=>m.category===c));
+  const cart = state.posNewOrder.cart;
+  return `
+  <div class="overlay" id="posNewOrderOverlay">
+    <div class="drawer rise" id="posNewOrderDrawer">
+      <div class="drawer-head">
+        <h3 class="disp" style="margin:0;">New walk-in order</h3>
+        <button data-action="closePOSNewOrder"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mute)" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div style="max-height:36vh;overflow-y:auto;margin-bottom:12px;">
+        ${cats.length===0 ? `<p class="empty">No available menu items.</p>` : cats.map(cat=>`
+          <p style="font-size:11px;color:var(--muted);text-transform:uppercase;font-weight:800;margin:12px 0 6px;">${esc(cat)}</p>
+          ${available.filter(m=>m.category===cat).map(item=>{
+            const q = cart.find(c=>c.id===item.id)?.qty || 0;
+            return `
+            <div class="cart-row">
+              <div><p style="margin:0;font-weight:500;">${esc(item.name)}</p><p class="mono" style="margin:0;font-size:12px;color:var(--mute);">${money(item.price)}</p></div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <button class="stepbtn" style="width:28px;height:28px;" data-pos-sub="${item.id}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="3"><path d="M5 12h14"/></svg></button>
+                <span class="mono" style="width:16px;text-align:center;">${q}</span>
+                <button class="stepbtn" style="width:28px;height:28px;" data-pos-add="${item.id}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg></button>
+              </div>
+            </div>`;
+          }).join("")}
+        `).join("")}
+      </div>
+      <input class="cart-input" id="posCustName" placeholder="Customer name (optional)" value="${esc(state.posNewOrder.customerName||"")}"/>
+      <input class="cart-input" id="posCustNotes" placeholder="Notes — allergies, no ice, etc. (optional)" value="${esc(state.posNewOrder.notes||"")}"/>
+      <div class="cart-total"><span>Total</span><span class="mono" style="font-size:18px;">${money(posCartSubtotal())}</span></div>
+      <button class="checkoutbtn" id="posCreateOrderBtn" ${cart.length===0?"disabled":""}>Create order</button>
+    </div>
+  </div>`;
+}
+
+
+function money(n){ return "৳" + Number(n).toFixed(0); }
+function newId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function orderCode(id){ return id.slice(-4).toUpperCase(); }
+function isToday(ts){ const d=new Date(ts), n=new Date(); return d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate(); }
+function esc(s){ const d=document.createElement("div"); d.textContent = s==null? "" : s; return d.innerHTML; }
+
+/* sync across tabs on same device/browser */
+window.addEventListener("storage", (e)=>{
+  if(e.key === "jb_orders"){
+    state.orders = load("jb_orders", []);
+    render();
+  }
+  if(e.key === "jb_menu"){
+    state.menu = loadMenu();
+    render();
+  }
+});
+
+/* ---------------- cart helpers ---------------- */
+function qtyOf(id){ const c = state.cart.find(c=>c.id===id); return c ? c.qty : 0; }
+function changeQty(item, delta){
+  const idx = state.cart.findIndex(c=>c.id===item.id);
+  if(idx === -1){ if(delta>0) state.cart.push({id:item.id,name:item.name,price:item.price,qty:1}); }
+  else{
+    const q = state.cart[idx].qty + delta;
+    if(q<=0) state.cart.splice(idx,1); else state.cart[idx].qty = q;
+  }
+  // Trigger a short futuristic "added to cart" animation on positive taps,
+  // and a distinct "removed" pulse on negative taps — so both + and -
+  // give clear, visible feedback instead of just the number quietly changing.
+  state.addedItemId = delta > 0 ? item.id : null;
+  state.removedItemId = delta < 0 ? item.id : null;
+  state.addedToken = Date.now();
+  render();
+  if(delta > 0){
+    setTimeout(()=>{
+      if(state.addedItemId === item.id){ state.addedItemId = null; render(); }
+    }, 650);
+  }
+  if(delta < 0){
+    setTimeout(()=>{
+      if(state.removedItemId === item.id){ state.removedItemId = null; render(); }
+    }, 450);
+  }
+}
+function cartSubtotal(){ return state.cart.reduce((s,c)=>s+c.price*c.qty,0); }
+function cartCount(){ return state.cart.reduce((s,c)=>s+c.qty,0); }
+
+/* ---------------- render ---------------- */
+const root = document.getElementById("root");
+
+function syncTrackedOrder(){
+  if(!state.trackingOrderId) return;
+  const latest = state.orders.find(x=>x.id===state.trackingOrderId);
+  if(latest) state.confirmed = latest;
+}
+
+function render(){
+  syncTrackedOrder();
+  if(state.confirmed) return renderConfirm();
+  if(state.view === "pin") return renderPin();
+  if(state.view === "admin"){
+    if(!state.staffUser){ state.view="pin"; return renderPin(); }
+    return renderAdmin();
+  }
+  return renderOrder();
+}
+
+function cupSVG(pct, count, added=false){
+  return `
+  <div class="cupbtn pop ${added?"added":""}" id="cupBtn" style="width:64px;height:64px;position:relative;">
+    <svg width="64" height="64" viewBox="0 0 64 64">
+      <defs><clipPath id="cupClip"><path d="M18 20 L46 20 L42 54 Q32 60 22 54 Z"/></clipPath></defs>
+      <circle cx="32" cy="32" r="31" fill="var(--surface)" stroke="var(--line)" stroke-width="1"/>
+      <g clip-path="url(#cupClip)"><rect x="14" y="${54-(34*pct/100)}" width="36" height="34" fill="var(--orange)"/></g>
+      <path d="M18 20 L46 20 L42 54 Q32 60 22 54 Z" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+      <path d="M15 22 L49 22" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    ${count>0 ? `<span class="cupbadge mono ${added?"added":""}">${count}</span>` : ""}
+  </div>`;
+}
+
+
+function renderFixedCheckout(){
+  const count = cartCount();
+  const total = cartSubtotal();
+  return `
+    <div class="checkout-fixed ${count===0?"empty":""}" id="fixedCheckout">
+      <div class="checkout-summary">
+        <span class="checkout-label">Checkout</span>
+        <span class="checkout-total">${money(total)}</span>
+        <span class="checkout-count">${count} item${count===1?"":"s"} in cart</span>
+      </div>
+      <button class="checkout-open" id="fixedCheckoutBtn">View Cart</button>
+    </div>
+  `;
+}
+
+function renderOrder(){
+  const available = state.menu.filter(m=>m.available);
+  const cats = getCategoryOrder(state.menu).filter(c=>available.some(m=>m.category===c));
+  if(!state.activeCat && cats.length) state.activeCat = cats[0];
+
+  let html = `
+  <div class="hero">
+    <div class="hero-row">
+      <img src="assets/logo.png" alt="The Juice Bar" style="max-width:260px;width:100%;height:auto;display:block;margin:0 auto;" onerror="this.replaceWith(Object.assign(document.createElement('h1'),{className:'disp',textContent:'The Juice Bar'}))">
+    </div>
+    <p>SCAN • TAP • SIP • PAY AT COUNTER</p>
+  </div>
+  <div class="catnav scroll">
+    ${cats.map(c=>`<button class="pill ${c===state.activeCat?'active':''}" data-action="goCat" data-cat="${esc(c)}">${esc(c)}</button>`).join("")}
+  </div>
+  <div class="menu-wrap">
+    ${(()=>{ 
+      const tid = state.trackingOrderId;
+      const tracked = tid ? state.orders.find(x=>x.id===tid) : null;
+      return tracked && !["completed","cancelled"].includes(tracked.status) ? `
+        <button id="resumeTrackingBtn" style="
+          width:100%;margin:0 0 12px;padding:12px 14px;border-radius:14px;
+          background:linear-gradient(90deg,rgba(248,190,3,.08),rgba(124,77,255,.08));
+          border:1px solid rgba(248,190,3,.2);color:#fff;font-weight:800;
+          display:flex;justify-content:space-between;align-items:center;
+        ">
+          <span>● Live order #${orderCode(tracked.id)}</span>
+          <span style="color:var(--cyan)">Track →</span>
+        </button>` : "";
+    })()}
+
+    ${cats.length===0 ? `<p class="empty">The menu is being updated — check back shortly.</p>` : ""}
+    ${cats.map(cat=>`
+      <div class="cat-block" id="cat-${cat.replace(/\s+/g,'-')}">
+        <div class="cat-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--lime)" stroke-width="2.5"><path d="M12 2 C6 6 6 14 12 22 C18 14 18 6 12 2 Z"/></svg><h2 class="disp">${esc(cat)}</h2></div>
+        ${available.filter(m=>m.category===cat).map(item=>{
+          const q = qtyOf(item.id);
+          return `
+          <div class="item ${state.addedItemId===item.id?"added":state.removedItemId===item.id?"removed":""}">
+            <div class="item-left">
+              <div class="item-thumb">${item.image ? `<img src="${esc(item.image)}" alt="">` : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mute)" stroke-width="1.8"><path d="M12 2 C6 6 6 14 12 22 C18 14 18 6 12 2 Z"/></svg>`}</div>
+              <div style="min-width:0;">
+                <p class="item-name">${esc(item.name)}</p>
+                <p class="item-desc">${esc(item.desc)}</p>
+                <p class="item-price mono">${money(item.price)}</p>
+              </div>
+            </div>
+            ${q===0 ? `
+              <button class="addbtn ${state.addedItemId===item.id?"added":""}" data-action="add" data-id="${item.id}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+              </button>` : `
+              <div class="stepper">
+                <button class="stepbtn ${state.removedItemId===item.id?"removed":""}" data-action="sub" data-id="${item.id}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="3"><path d="M5 12h14"/></svg></button>
+                <span class="stepqty mono">${q}</span>
+                <button class="stepbtn dark ${state.addedItemId===item.id?"added":""}" data-action="add" data-id="${item.id}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg></button>
+              </div>`}
+          </div>`;
+        }).join("")}
+      </div>
+    `).join("")}
+    <button class="staffbtn" data-action="openStaff">Staff</button>
+  </div>
+  ${cartCount()>0 && !state.showCart ? cupSVG(Math.max(0,Math.min(100,cartSubtotal()/25*100)), cartCount(), !!state.addedItemId) : ""}
+  ${renderFixedCheckout()}
+  ${state.showCart ? renderCartDrawer() : ""}
+  `;
+  root.innerHTML = html;
+  bindOrderEvents();
+}
+
+function renderCartDrawer(){
+  return `
+  <div class="overlay" id="cartOverlay">
+    <div class="drawer rise" id="cartDrawer">
+      <div class="drawer-head">
+        <h3 class="disp" style="margin:0;">Your order</h3>
+        <button data-action="closeCart"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--mute)" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      ${state.cart.length===0 ? `<p class="empty">Your cup is empty.</p>` : `
+      ${state.cart.map(c=>`
+        <div class="cart-row">
+          <div><p style="margin:0;font-weight:500;">${esc(c.name)}</p><p class="mono" style="margin:0;font-size:12px;color:var(--mute);">${money(c.price)} each</p></div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <button class="stepbtn" style="width:28px;height:28px;" data-action="sub" data-id="${c.id}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="3"><path d="M5 12h14"/></svg></button>
+            <span class="mono" style="width:16px;text-align:center;">${c.qty}</span>
+            <button class="stepbtn" style="width:28px;height:28px;" data-action="add" data-id="${c.id}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg></button>
+          </div>
+        </div>`).join("")}
+      <input class="cart-input" id="custName" placeholder="Name for your order (optional)" value="${esc(state.tmpName||"")}"/>
+      <input class="cart-input" id="custNotes" placeholder="Notes — allergies, no ice, etc. (optional)" value="${esc(state.tmpNotes||"")}"/>
+      <div class="cart-total"><span>Total</span><span class="mono" style="font-size:18px;">${money(cartSubtotal())}</span></div>
+      <button class="checkoutbtn" id="placeBtn" ${state.placing?"disabled":""}>${state.placing?"Placing order…":"Place order · Pay at counter"}</button>
+      `}
+    </div>
+  </div>`;
+}
+
+
+function createTrail(x, y){
+  const dot = document.createElement("div");
+  dot.className = "fly-trail";
+  dot.style.left = (x - 6) + "px";
+  dot.style.top = (y - 6) + "px";
+  document.body.appendChild(dot);
+  setTimeout(()=>dot.remove(), 600);
+}
+
+function flyProductToCheckout(button){
+  const card = button.closest(".item");
+  // Fly the whole thumbnail (photo OR the placeholder icon when an item
+  // has no image set) — previously this only looked for an <img>, so
+  // items without a photo silently skipped the animation entirely.
+  const thumb = card ? card.querySelector(".item-thumb") : null;
+  if(!thumb) return;
+
+  // The checkout target is the floating cart on the menu, or the checkout button
+  // when the cart drawer is already open.
+  const target = document.getElementById("placeBtn") || document.getElementById("cupBtn");
+  // On the very first add, the floating cart is rendered only after changeQty().
+  // Use its intended bottom-right position as the temporary destination.
+  const targetRect = target ? target.getBoundingClientRect() : {
+    left: window.innerWidth - 80,
+    top: window.innerHeight - 84,
+    width: 64,
+    height: 64
+  };
+
+  const start = thumb.getBoundingClientRect();
+  const end = targetRect;
+
+  const flyer = thumb.cloneNode(true);
+  flyer.className = "fly-to-checkout";
+  flyer.style.left = start.left + "px";
+  flyer.style.top = start.top + "px";
+  // Inline size/shape so the clone flies as a uniform bubble whether it
+  // holds a photo or the placeholder icon inside it.
+  flyer.style.width = "58px";
+  flyer.style.height = "58px";
+  flyer.style.borderRadius = "15px";
+  flyer.style.display = "flex";
+  flyer.style.alignItems = "center";
+  flyer.style.justifyContent = "center";
+  document.body.appendChild(flyer);
+  // Force the browser to actually paint the flyer at its starting position
+  // before we schedule the move to the end position. Without this, the
+  // upcoming full-page re-render from changeQty() (called right after this
+  // function returns) can get batched into the same frame as the "fly to
+  // end position" style change below — so the browser never paints the
+  // starting frame and the icon silently snaps to the cart instead of
+  // visibly flying there. This was intermittent: worked when the browser
+  // happened to be idle (e.g. the very first click), broke once the page
+  // had more going on (subsequent clicks).
+  void flyer.offsetWidth;
+
+  // Mid-flight trail points.
+  const sx = start.left + start.width/2;
+  const sy = start.top + start.height/2;
+  const ex = end.left + end.width/2;
+  const ey = end.top + end.height/2;
+
+  createTrail(sx, sy);
+  setTimeout(()=>createTrail(sx + (ex-sx)*.28, sy + (ey-sy)*.28 - 35), 290);
+  setTimeout(()=>createTrail(sx + (ex-sx)*.55, sy + (ey-sy)*.55 - 20), 570);
+  setTimeout(()=>createTrail(sx + (ex-sx)*.78, sy + (ey-sy)*.78), 850);
+
+  // Double rAF: the first callback fires before the *next* paint (which now
+  // reliably includes the flyer's starting position, thanks to the forced
+  // reflow above); the second callback then fires just before the paint
+  // after that, guaranteeing the "start" frame has definitely been
+  // committed before we change to the "end" styles that the CSS transition
+  // animates toward.
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      flyer.style.left = (end.left + end.width/2 - 29) + "px";
+      flyer.style.top = (end.top + end.height/2 - 29) + "px";
+      flyer.style.transform = "translate(0,0) scale(.28) rotate(540deg)";
+      flyer.style.opacity = "0";
+    });
+  });
+
+  setTimeout(()=>{
+    flyer.remove();
+
+    // Pop the checkout target or cart icon when the item arrives.
+    if(target){
+      target.classList.remove("checkout-impact");
+      void target.offsetWidth;
+      target.classList.add("checkout-impact");
+      setTimeout(()=>target.classList.remove("checkout-impact"), 650);
+    }
+  }, 1320);
+}
+
+function bindOrderEvents(){
+  const resumeTrackingBtn = document.getElementById("resumeTrackingBtn");
+  if(resumeTrackingBtn) resumeTrackingBtn.onclick=()=>{
+    const tracked = state.orders.find(x=>x.id===state.trackingOrderId);
+    if(tracked){
+      state.confirmed = tracked;
+      render();
+    }
+  };
+
+  root.querySelectorAll('[data-action="goCat"]').forEach(el=>el.onclick=()=>{
+    state.activeCat = el.dataset.cat; render();
+    setTimeout(()=>{ const t=document.getElementById("cat-"+el.dataset.cat.replace(/\s+/g,'-')); if(t) t.scrollIntoView({behavior:"smooth",block:"start"}); },0);
+  });
+  root.querySelectorAll('[data-action="add"]').forEach(el=>el.onclick=()=>{
+    const item = state.menu.find(m=>m.id===el.dataset.id);
+    flyProductToCheckout(el);
+    changeQty(item,1);
+  });
+  root.querySelectorAll('[data-action="sub"]').forEach(el=>el.onclick=()=>{
+    const item = state.menu.find(m=>m.id===el.dataset.id) || state.cart.find(c=>c.id===el.dataset.id);
+    changeQty(item,-1);
+  });
+  const staffBtn = root.querySelector('[data-action="openStaff"]');
+  if(staffBtn) staffBtn.onclick=()=>{ state.view = state.staffUser ? "admin" : "pin"; render(); };
+  const fixedCheckoutBtn = document.getElementById("fixedCheckoutBtn");
+  if(fixedCheckoutBtn) fixedCheckoutBtn.onclick=()=>{ state.showCart=true; render(); };
+
+  const cupBtn = document.getElementById("cupBtn");
+  if(cupBtn) cupBtn.onclick=()=>{ state.showCart=true; render(); };
+  const overlay = document.getElementById("cartOverlay");
+  if(overlay) overlay.onclick=(e)=>{ if(e.target===overlay){ state.showCart=false; render(); } };
+  const closeBtn = root.querySelector('[data-action="closeCart"]');
+  if(closeBtn) closeBtn.onclick=()=>{ state.showCart=false; render(); };
+  const nameInp = document.getElementById("custName");
+  if(nameInp) nameInp.oninput=(e)=>{ state.tmpName = e.target.value; };
+  const notesInp = document.getElementById("custNotes");
+  if(notesInp) notesInp.oninput=(e)=>{ state.tmpNotes = e.target.value; };
+  const placeBtn = document.getElementById("placeBtn");
+  if(placeBtn) placeBtn.onclick=placeOrder;
+}
+
+async function placeOrder(){
+  if(state.cart.length===0) return;
+  state.placing = true; render();
+  const order = {
+    id: newId(),
+    items: state.cart,
+    notes: state.tmpNotes||"",
+    customerName: (state.tmpName||"").trim(),
+    total: cartSubtotal(),
+    status: "pending",
+    createdAt: Date.now(),
+    paymentStatus: "unpaid"
+  };
+  state.orders.push(order);
+  saveOrders();
+  state.confirmed = order;
+  state.trackingOrderId = order.id;
+  state.cart = [];
+  state.showCart = false;
+  state.tmpName = ""; state.tmpNotes = "";
+  state.syncError = null;
+
+  try{
+    // Push the order to the server so it reaches the kitchen (KOT) and
+    // billing (POS) dashboards in realtime, and gets saved to MongoDB.
+    const serverOrder = await syncToServer(order);
+    const idx = state.orders.findIndex(o=>o.id===order.id);
+    if(idx !== -1) state.orders[idx] = serverOrder;
+    if(state.confirmed && state.confirmed.id === order.id) state.confirmed = serverOrder;
+    saveOrders();
+  }catch(err){
+    // Order is still saved locally and the customer still sees their
+    // confirmation screen — but staff won't see it until this device
+    // reconnects. Flag it so the tracking screen can tell the customer.
+    console.error("Could not sync order to server:", err.message);
+    state.syncError = "Your order was saved on this device but hasn't reached the counter yet — please also let a staff member know.";
+  }
+
+  state.placing = false;
+  render();
+}
+
+
+function renderConfirm(){
+  const o = state.confirmed;
+  const steps = [
+    {key:"pending", title:"Order received", sub:"Your order has been sent to the kitchen."},
+    {key:"preparing", title:"Preparing", sub:"The kitchen is preparing your drinks and food."},
+    {key:"ready", title:"Ready for pickup", sub:"Your order is ready. Please collect it at the counter."},
+    {key:"completed", title:"Completed", sub:"Order completed. Thank you!"}
+  ];
+  const orderStatus = o.status || "pending";
+  const currentIndex = Math.max(0, steps.findIndex(s=>s.key===orderStatus));
+  root.innerHTML = `
+    <div class="track-wrap">
+      <div class="track-card rise">
+        <div class="track-head">
+          <div>
+            <div class="track-kicker">LIVE ORDER TRACKING</div>
+            <h2 class="track-title">Your order is on the way</h2>
+            <p class="track-code">ORDER #${orderCode(o.id)}</p>
+          </div>
+          <span class="track-live">● LIVE</span>
+        </div>
+
+        ${state.syncError ? `
+          <div class="track-current" style="border-color:rgba(255,85,119,.25);background:rgba(255,85,119,.05);margin:14px 0 0;">
+            <div class="track-current-label" style="color:#ff7793">Connection notice</div>
+            <div style="color:#fff;font-size:12px;margin-top:5px;line-height:1.5">${esc(state.syncError)}</div>
+          </div>
+        ` : ""}
+
+        <div class="track-current">
+          <div class="track-current-label">Current status</div>
+          <div class="track-current-status">
+            ${orderStatus==="cancelled" ? "Cancelled" : STATUS_LABEL[orderStatus] || "Order received"}
+          </div>
+          <div style="font-size:11px;color:#7f93ab;margin-top:5px">
+            ${o.customerName ? `For ${esc(o.customerName)} • ` : ""}${formatTime(o.createdAt)}
+          </div>
+        </div>
+
+        ${orderStatus==="cancelled" ? `
+          <div class="track-current" style="border-color:rgba(255,85,119,.25);background:rgba(255,85,119,.05)">
+            <div class="track-current-label" style="color:#ff7793">Order update</div>
+            <div style="color:#fff;font-weight:800;margin-top:5px">This order was cancelled.</div>
+          </div>
+        ` : `
+          <div class="track-steps">
+            ${steps.map((s,i)=>{
+              const done = i < currentIndex || orderStatus==="completed";
+              const active = i === currentIndex && orderStatus!=="completed";
+              return `
+                <div class="track-step ${done?"done":""} ${active?"active":""}">
+                  <div class="track-dot">${done ? "✓" : i+1}</div>
+                  <div>
+                    <div class="track-step-title">${s.title}</div>
+                    <div class="track-step-sub">${s.sub}</div>
+                  </div>
+                </div>`;
+            }).join("")}
+          </div>
+        `}
+
+        <div class="track-footer">
+          ${orderStatus!=="completed" && orderStatus!=="cancelled" ? `
+            <button class="track-btn primary" id="keepTrackingBtn">Keep Tracking</button>
+          ` : `
+            <button class="track-btn primary" id="newOrderBtn">Start New Order</button>
+          `}
+          <button class="track-btn" id="trackDetailsBtn">View Order Details</button>
+        </div>
+
+        <div id="trackDetails" style="display:none;margin-top:12px;padding:13px;border-radius:14px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06)">
+          ${o.items.map(it=>`
+            <div class="receipt-row">
+              <span>${it.qty}× ${esc(it.name)}</span>
+              <span class="mono" style="color:#9eb0c5">৳${Number(it.price*it.qty).toFixed(0)}</span>
+            </div>`).join("")}
+          <div class="receipt-total">
+            <span>Total</span><span class="mono">৳${Number(o.total).toFixed(0)}</span>
+          </div>
+          ${o.notes?`<div style="margin-top:9px;font-size:11px;color:#8ea0b8">Note: ${esc(o.notes)}</div>`:""}
+          ${o.paymentStatus==="paid" ? `<div style="margin-top:9px;color:var(--lime);font-size:11px;font-weight:900">PAID • ${esc(o.paymentMethod||"Counter")}</div>` : `<div style="margin-top:9px;color:#ffb24d;font-size:11px;font-weight:900">PAY AT COUNTER</div>`}
+        </div>
+      </div>
+    </div>
+  `;
+
+  const detailsBtn = document.getElementById("trackDetailsBtn");
+  const details = document.getElementById("trackDetails");
+  if(detailsBtn && details){
+    detailsBtn.onclick=()=>{
+      details.style.display = details.style.display==="none" ? "block" : "none";
+    };
+  }
+
+  const keep = document.getElementById("keepTrackingBtn");
+  if(keep){
+    keep.onclick=()=>render();
+  }
+
+  const newBtn = document.getElementById("newOrderBtn");
+  if(newBtn){
+    newBtn.onclick=()=>{
+      state.confirmed=null;
+      state.trackingOrderId=null;
+      state.syncError=null;
+      state.view="order";
+      render();
+    };
+  }
+}
+
+function renderPin(){
+  root.innerHTML = `
+  <div class="pin-wrap">
+    <div class="pin-card rise">
+      <button class="backlink" id="pinBack"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CFE0CE" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Back to menu</button>
+      <div class="lockcircle"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+      <h2 class="disp">Staff access</h2>
+      <p>Sign in with your staff username and password.</p>
+      <input class="pin-input mono" style="letter-spacing:normal;font-size:16px;text-align:left;" id="userInput" type="text" placeholder="Username" autocomplete="username" autofocus />
+      <input class="pin-input mono ${state.pinError?'err':''}" style="letter-spacing:normal;font-size:16px;text-align:left;" id="passInput" type="password" placeholder="Password" autocomplete="current-password" />
+      ${state.pinError ? `<p class="pin-err">${esc(state.pinError)}</p>` : ""}
+      <button class="unlockbtn" id="unlockBtn">Unlock dashboard</button>
+    </div>
+  </div>`;
+  document.getElementById("pinBack").onclick=()=>{ state.view="order"; state.pinError=false; render(); };
+  const userInput = document.getElementById("userInput");
+  const passInput = document.getElementById("passInput");
+  [userInput,passInput].forEach(inp=>{
+    inp.oninput=()=>{ state.pinError=false; };
+    inp.onkeydown=(e)=>{ if(e.key==="Enter") tryLogin(); };
+  });
+  document.getElementById("unlockBtn").onclick=tryLogin;
+  userInput.focus();
+  function tryLogin(){
+    const username = userInput.value.trim();
+    const password = passInput.value;
+    if(!username || !password){ state.pinError="Enter your username and password."; render(); return; }
+    if(!realtimeConnected){ state.pinError="Not connected to the server yet — wait a moment and try again."; render(); return; }
+    socket.emit("staff:login", {username, password}, (res)=>{
+      if(res && res.ok){
+        state.staffUser = res.user;
+        state.staffToken = res.token;
+        localStorage.setItem("jb_staff_token", res.token);
+        state.pinError=false;
+        state.view="admin";
+        state.adminTab="orders";
+        render();
+      }else{
+        state.pinError = (res && res.error) || "Login failed.";
+        render();
+      }
+    });
+  }
+}
+
+function advanceOrder(id, status){
+  const o = state.orders.find(o=>o.id===id);
+  if(o){
+    o.status = status;
+    saveOrders();
+    updateServerOrderStatus(id,status);
+    render();
+  }
+}
+
+
+function formatTime(ts){
+  return new Date(ts).toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+}
+function orderPaymentStatus(o){
+  return o.paymentStatus || "unpaid";
+}
+function setPaymentStatus(id, method){
+  const o = state.orders.find(x=>x.id===id);
+  if(!o) return;
+  o.paymentStatus = "paid";
+  o.paymentMethod = method;
+  o.paidAt = Date.now();
+  saveOrders();
+  updateServerPayment(id,method);
+  render();
+}
+function printKOT(id){
+  const o = state.orders.find(x=>x.id===id);
+  if(!o) return;
+  const itemRows = o.items.map(it=>`
+    <tr><td style="padding:6px 0">${it.qty} × ${esc(it.name)}</td><td style="text-align:right">${esc(o.notes||"")}</td></tr>
+  `).join("");
+  const popup = window.open("", "_blank", "width=420,height=650");
+  if(!popup) return;
+  popup.document.write(`
+    <html><head><title>KOT #${orderCode(o.id)}</title>
+    <style>
+      body{font-family:Arial,sans-serif;padding:18px;color:#111}
+      h1{text-align:center;font-size:22px;margin:0 0 6px}
+      p{margin:4px 0;font-size:13px}
+      hr{border:0;border-top:1px dashed #111;margin:12px 0}
+      table{width:100%;border-collapse:collapse;font-size:14px}
+      .big{font-size:28px;font-weight:800;text-align:center}
+    </style></head><body>
+      <h1>THE JUICE BAR</h1>
+      <div class="big">KOT #${orderCode(o.id)}</div>
+      <p><b>Time:</b> ${formatTime(o.createdAt)}</p>
+      ${o.customerName?`<p><b>Customer:</b> ${esc(o.customerName)}</p>`:""}
+      <hr>
+      <table>${itemRows}</table>
+      ${o.notes?`<hr><p><b>Note:</b> ${esc(o.notes)}</p>`:""}
+      <hr>
+      <p style="text-align:center;font-weight:700">KITCHEN COPY</p>
+    </body></html>
+  `);
+  popup.document.close();
+  popup.focus();
+  setTimeout(()=>popup.print(),250);
+}
+function printPOSReceipt(id){
+  const o = state.orders.find(x=>x.id===id);
+  if(!o) return;
+  const rows = o.items.map(it=>`
+    <tr><td>${it.qty} × ${esc(it.name)}</td><td style="text-align:right">৳${Number(it.price*it.qty).toFixed(0)}</td></tr>
+  `).join("");
+  const popup = window.open("", "_blank", "width=420,height=700");
+  if(!popup) return;
+  popup.document.write(`
+    <html><head><title>Receipt #${orderCode(o.id)}</title>
+    <style>
+      body{font-family:Arial,sans-serif;padding:18px;color:#111}
+      h1{text-align:center;font-size:20px;margin:0}
+      .code{text-align:center;font-size:24px;font-weight:800;margin:8px 0}
+      table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
+      td{padding:5px 0}
+      .total{display:flex;justify-content:space-between;font-weight:800;font-size:18px;border-top:1px dashed #111;padding-top:10px;margin-top:8px}
+      p{font-size:12px;text-align:center;margin:8px 0}
+    </style></head><body>
+      <h1>THE JUICE BAR</h1>
+      <div class="code">Receipt #${orderCode(o.id)}</div>
+      <p>${formatTime(o.createdAt)}${o.customerName?` • ${esc(o.customerName)}`:""}</p>
+      <table>${rows}</table>
+      <div class="total"><span>Total</span><span>৳${Number(o.total).toFixed(0)}</span></div>
+      <p>Payment: ${esc(o.paymentMethod || "Counter")}</p>
+      <p>Thank you!</p>
+    </body></html>
+  `);
+  popup.document.close();
+  popup.focus();
+  setTimeout(()=>popup.print(),250);
+}
+
+function renderKOTTab(tc){
+  const kitchenOrders = state.orders
+    .filter(o=>!["completed","cancelled"].includes(o.status))
+    .sort((a,b)=>a.createdAt-b.createdAt);
+
+  tc.innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+      <span class="kot-label">KITCHEN DISPLAY</span>
+      <button class="pill" id="kotRefresh">Refresh</button>
+    </div>
+    ${kitchenOrders.length===0 ? `<div class="kot-empty">No active kitchen tickets.</div>` : `
+      <div class="kot-grid">
+        ${kitchenOrders.map(o=>{
+          const next = o.status==="pending" ? "preparing" : (o.status==="preparing" ? "ready" : "completed");
+          return `
+          <div class="kot-card">
+            <div class="kot-head">
+              <div>
+                <p class="kot-code">KOT #${orderCode(o.id)}</p>
+                <p class="kot-meta">${formatTime(o.createdAt)}${o.customerName?` • ${esc(o.customerName)}`:""}</p>
+              </div>
+              <span class="badge" style="background:${STATUS_COLOR[o.status]};">${STATUS_LABEL[o.status]}</span>
+              ${o.paymentStatus==="paid" ? '<span class="pos-paid" style="margin-left:4px">PAID</span>' : '<span class="pos-unpaid" style="margin-left:4px">UNPAID</span>'}
+            </div>
+            <div class="kot-items">
+              ${o.items.map(it=>`<div class="kot-item"><strong>${it.qty} × ${esc(it.name)}</strong><span style="color:#8ea0b8">৳${Number(it.price*it.qty).toFixed(0)}</span></div>`).join("")}
+            </div>
+            ${o.notes?`<div class="kot-note">NOTE: ${esc(o.notes)}</div>`:""}
+            <div class="kot-actions">
+              <button class="kot-btn primary" data-kot-print="${o.id}">Print KOT</button>
+              ${next ? `<button class="kot-btn success" data-kot-next="${o.id}" data-next="${next}">${next==="preparing"?"Start Preparing":next==="ready"?"Mark Ready":"Complete"}</button>`:""}
+            </div>
+          </div>`;
+        }).join("")}
+      </div>
+    `}
+  `;
+
+  const refresh = document.getElementById("kotRefresh");
+  if(refresh) refresh.onclick=()=>render();
+
+  tc.querySelectorAll("[data-kot-print]").forEach(btn=>{
+    btn.onclick=()=>printKOT(btn.dataset.kotPrint);
+  });
+  tc.querySelectorAll("[data-kot-next]").forEach(btn=>{
+    btn.onclick=()=>advanceOrder(btn.dataset.kotNext, btn.dataset.next);
+  });
+}
+
+function renderPOSTab(tc){
+  const posOrders = state.orders
+    .slice()
+    .filter(o=>o.status!=="cancelled")
+    .sort((a,b)=>b.createdAt-a.createdAt);
+
+  const unpaid = posOrders.filter(o=>orderPaymentStatus(o)!=="paid");
+  const paid = posOrders.filter(o=>orderPaymentStatus(o)==="paid");
+
+  tc.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+      <h2 class="disp" style="margin:0;font-size:16px;">Billing / Payment Dashboard</h2>
+      <button class="savebtn" id="posNewOrderBtn" style="font-size:13px;padding:10px 16px;display:flex;align-items:center;gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#031218" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg> New Order
+      </button>
+    </div>
+    <div class="pos-shell">
+      <div class="pos-panel">
+        <h3 class="pos-title">Pending Payments <span style="color:var(--cyan)">(${unpaid.length})</span></h3>
+        ${unpaid.length===0 ? `<div class="pos-empty">All current orders are paid.</div>` : unpaid.map(o=>`
+          <div class="pos-order-card">
+            <div class="pos-order-head">
+              <div>
+                <strong>#${orderCode(o.id)}</strong>
+                <div style="font-size:11px;color:var(--muted)">${o.customerName?esc(o.customerName):"Walk-in"} • ${formatTime(o.createdAt)}</div>
+              </div>
+              <span class="pos-order-total">৳${Number(o.total).toFixed(0)}</span>
+            </div>
+            <div style="font-size:12px;color:#aebed0;margin-top:8px">
+              ${o.items.map(it=>`${it.qty}× ${esc(it.name)}`).join(" • ")}
+            </div>
+            <div class="pos-pay-row">
+              <button class="pos-pay-btn" data-pos-pay="${o.id}" data-method="Cash">Pay Cash</button>
+              <button class="pos-pay-btn" data-pos-pay="${o.id}" data-method="bKash">Pay bKash</button>
+              <button class="pos-pay-btn" data-pos-pay="${o.id}" data-method="Nagad">Pay Nagad</button>
+              <button class="pos-pay-btn" data-pos-pay="${o.id}" data-method="Card">Pay Card</button>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="pos-panel">
+        <h3 class="pos-title">POS Summary</h3>
+        <div class="stat-card" style="margin-bottom:10px">
+          <p class="stat-label">Paid Orders</p>
+          <p class="disp stat-value">${paid.length}</p>
+        </div>
+        <div class="stat-card" style="margin-bottom:10px">
+          <p class="stat-label">Paid Revenue</p>
+          <p class="disp stat-value">৳${paid.reduce((s,o)=>s+Number(o.total||0),0).toFixed(0)}</p>
+        </div>
+        <div class="pos-receipt">
+          <h4 style="margin:0 0 10px;font-size:13px">Recent Receipts</h4>
+          ${paid.length===0 ? `<div class="pos-empty">No paid receipts yet.</div>` : paid.slice(0,8).map(o=>`
+            <div class="pos-order-card">
+              <div class="pos-order-head">
+                <div>
+                  <strong>#${orderCode(o.id)}</strong>
+                  <div style="font-size:11px;color:var(--muted)">${esc(o.paymentMethod||"Counter")} • ${formatTime(o.paidAt||o.createdAt)}</div>
+                </div>
+                <span class="pos-paid">PAID</span>
+              </div>
+              <div class="pos-receipt-total"><span>৳${Number(o.total).toFixed(0)}</span><button class="kot-btn" data-pos-print="${o.id}">Receipt</button></div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+  `;
+
+  tc.querySelectorAll("[data-pos-pay]").forEach(btn=>{
+    btn.onclick=()=>setPaymentStatus(btn.dataset.posPay, btn.dataset.method);
+  });
+  tc.querySelectorAll("[data-pos-print]").forEach(btn=>{
+    btn.onclick=()=>printPOSReceipt(btn.dataset.posPrint);
+  });
+  const newOrderBtn = tc.querySelector("#posNewOrderBtn");
+  if(newOrderBtn) newOrderBtn.onclick = openPOSNewOrder;
+}
+
+function renderAdmin(){
+  const scoped = state.range==="today" ? state.orders.filter(o=>isToday(o.createdAt)) : state.orders;
+  const revenue = scoped.filter(o=>o.status!=="cancelled").reduce((s,o)=>s+o.total,0);
+  const orderCount = scoped.filter(o=>o.status!=="cancelled").length;
+  const tally = {};
+  scoped.forEach(o=>{ if(o.status==="cancelled") return; o.items.forEach(it=>{ tally[it.name]=(tally[it.name]||0)+it.qty; }); });
+  const top = Object.entries(tally).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const maxTop = top.length ? top[0][1] : 1;
+
+  const filteredOrders = state.orders
+    .filter(o => state.statusFilter==="active" ? !["completed","cancelled"].includes(o.status) : true)
+    .sort((a,b)=>b.createdAt-a.createdAt);
+
+  root.innerHTML = `
+  <div class="admin-head">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="assets/logo.png" alt="The Juice Bar" style="height:32px;width:auto;display:block;" onerror="this.remove()">
+      <h1 class="disp" style="margin:0;">COMMAND CENTER</h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="mono" style="color:var(--muted);font-size:12px;">${esc(state.staffUser.name)} (${esc(state.staffUser.role)})</span>
+      <button class="exitbtn" id="logoutBtn">Log out</button>
+      <button class="exitbtn" id="exitAdmin"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#CFE0CE" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Exit to menu</button>
+    </div>
+  </div>
+  <div class="admin-body">
+    <div class="tabs">
+      <button class="tab ${state.adminTab==='orders'?'active':''}" data-tab="orders">Orders</button>
+      <button class="tab ${state.adminTab==='kot'?'active':''}" data-tab="kot">KOT</button>
+      <button class="tab ${state.adminTab==='pos'?'active':''}" data-tab="pos">POS</button>
+      <button class="tab ${state.adminTab==='menu'?'active':''}" data-tab="menu">Menu</button>
+      <button class="tab ${state.adminTab==='stats'?'active':''}" data-tab="stats">Stats</button>
+      ${state.staffUser.role==='owner' ? `<button class="tab ${state.adminTab==='staff'?'active':''}" data-tab="staff">Staff</button>` : ""}
+      <button class="tab ${state.adminTab==='account'?'active':''}" data-tab="account">Account</button>
+    </div>
+    <div id="tabContent"></div>
+  </div>
+  ${state.posNewOrder ? renderPOSNewOrderModal() : ""}`;
+
+  document.getElementById("exitAdmin").onclick=()=>{ state.view="order"; render(); };
+  document.getElementById("logoutBtn").onclick=()=>{
+    if(state.staffToken) socket.emit("staff:logout", {token: state.staffToken});
+    state.staffUser = null;
+    state.staffToken = null;
+    localStorage.removeItem("jb_staff_token");
+    state.view="order";
+    render();
+  };
+  root.querySelectorAll("[data-tab]").forEach(el=>el.onclick=()=>{ state.adminTab = el.dataset.tab; state.menuDirty=false; state.menuDraft=null; state.categoryOrderDraft=null; state.staffFormError=null; render(); });
+
+  const tc = document.getElementById("tabContent");
+
+  if(state.adminTab==="orders"){
+    tc.innerHTML = `
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <button class="pill ${state.statusFilter==='active'?'active':''}" data-f="active">Active</button>
+        <button class="pill ${state.statusFilter==='all'?'active':''}" data-f="all">All</button>
+      </div>
+      ${filteredOrders.length===0 ? `<p class="empty">No orders here yet.</p>` : `
+      <div class="orders-grid">
+        ${filteredOrders.map(o=>{
+          const nextIdx = STATUS_FLOW.indexOf(o.status)+1;
+          const nextStatus = STATUS_FLOW[nextIdx];
+          return `
+          <div class="order-card">
+            <div class="order-head">
+              <div><p class="disp order-code">#${orderCode(o.id)}</p>${o.customerName?`<p class="order-name">${esc(o.customerName)}</p>`:""}</div>
+              <span class="badge" style="background:${STATUS_COLOR[o.status]};${o.status==='ready'?'color:var(--ink);':''}">${STATUS_LABEL[o.status]}</span>
+            </div>
+            <div>
+              ${o.items.map(it=>`<p class="order-item">${it.qty}× ${esc(it.name)}</p>`).join("")}
+              ${o.notes?`<p class="order-note">Note: ${esc(o.notes)}</p>`:""}
+            </div>
+            <div class="order-foot">
+              <span class="mono order-total">${money(o.total)}</span>
+              <div style="display:flex;gap:8px;">
+                ${o.status!=="completed"&&o.status!=="cancelled"?`<button class="cancelbtn" data-cancel="${o.id}">Cancel</button>`:""}
+                ${nextStatus?`<button class="advancebtn" data-adv="${o.id}" data-next="${nextStatus}">Mark ${STATUS_LABEL[nextStatus]}</button>`:""}
+              </div>
+            </div>
+          </div>`;
+        }).join("")}
+      </div>`}
+    `;
+    tc.querySelectorAll("[data-f]").forEach(el=>el.onclick=()=>{ state.statusFilter=el.dataset.f; render(); });
+    tc.querySelectorAll("[data-adv]").forEach(el=>el.onclick=()=>advanceOrder(el.dataset.adv, el.dataset.next));
+    tc.querySelectorAll("[data-cancel]").forEach(el=>el.onclick=()=>advanceOrder(el.dataset.cancel, "cancelled"));
+  }
+
+
+  if(state.adminTab==="kot"){
+    renderKOTTab(tc);
+  }
+
+  if(state.adminTab==="pos"){
+    renderPOSTab(tc);
+  }
+
+  if(state.adminTab==="stats"){
+    tc.innerHTML = `
+      <div style="display:flex;gap:8px;margin-bottom:20px;">
+        <button class="pill ${state.range==='today'?'active':''}" data-r="today">Today</button>
+        <button class="pill ${state.range==='all'?'active':''}" data-r="all">All time</button>
+      </div>
+      <div class="stat-cards">
+        <div class="stat-card"><p class="stat-label">Orders</p><p class="disp stat-value">${orderCount}</p></div>
+        <div class="stat-card"><p class="stat-label">Revenue</p><p class="disp stat-value">${money(revenue)}</p></div>
+      </div>
+      <div class="topbox">
+        <h3 style="font-weight:600;font-size:16px;">Top sellers</h3>
+        ${top.length===0?`<p style="color:var(--mute);font-size:14px;">No sales in this range yet.</p>`:top.map(([name,qty])=>`
+          <div class="toprow">
+            <div class="toprow-label"><span>${esc(name)}</span><span class="mono">${qty}</span></div>
+            <div class="barbg"><div class="barfg" style="width:${(qty/maxTop)*100}%;"></div></div>
+          </div>`).join("")}
+      </div>
+    `;
+    tc.querySelectorAll("[data-r]").forEach(el=>el.onclick=()=>{ state.range=el.dataset.r; render(); });
+  }
+
+  if(state.adminTab==="menu"){
+    if(!state.menuDraft){
+      state.menuDraft = JSON.parse(JSON.stringify(state.menu));
+      state.categoryOrderDraft = getCategoryOrder(state.menuDraft);
+    }
+    renderMenuEditor(tc);
+  }
+
+  if(state.adminTab==="staff" && state.staffUser.role==="owner"){
+    renderStaffTab(tc);
+  }
+
+  if(state.adminTab==="account"){
+    renderAccountTab(tc);
+  }
+
+  if(state.posNewOrder){
+    const overlay = document.getElementById("posNewOrderOverlay");
+    if(overlay) overlay.onclick=(e)=>{ if(e.target===overlay) closePOSNewOrder(); };
+    root.querySelectorAll("[data-action='closePOSNewOrder']").forEach(el=>el.onclick=closePOSNewOrder);
+    root.querySelectorAll("[data-pos-add]").forEach(el=>el.onclick=()=>{
+      const item = state.menu.find(m=>m.id===el.dataset.posAdd);
+      if(item) posChangeQty(item,1);
+    });
+    root.querySelectorAll("[data-pos-sub]").forEach(el=>el.onclick=()=>{
+      const item = state.menu.find(m=>m.id===el.dataset.posSub);
+      if(item) posChangeQty(item,-1);
+    });
+    const nameInp = document.getElementById("posCustName");
+    if(nameInp) nameInp.oninput=(e)=>{ state.posNewOrder.customerName = e.target.value; };
+    const notesInp = document.getElementById("posCustNotes");
+    if(notesInp) notesInp.oninput=(e)=>{ state.posNewOrder.notes = e.target.value; };
+    const createBtn = document.getElementById("posCreateOrderBtn");
+    if(createBtn) createBtn.onclick=submitPOSOrder;
+  }
+}
+
+/* Keep categoryOrderDraft in sync with whatever categories actually exist
+   in the draft (items get added/removed, which can add or remove a
+   category). Preserves the relative order staff already set. */
+function syncCategoryOrderDraft(){
+  const present = [...new Set(state.menuDraft.map(m=>m.category))];
+  state.categoryOrderDraft = (state.categoryOrderDraft||[]).filter(c=>present.includes(c));
+  present.forEach(c=>{ if(!state.categoryOrderDraft.includes(c)) state.categoryOrderDraft.push(c); });
+}
+/* Move a category up (dir=-1) or down (dir=+1) in categoryOrderDraft. */
+function moveCategoryDraft(cat, dir){
+  const order = state.categoryOrderDraft;
+  const i = order.indexOf(cat);
+  const j = i + dir;
+  if(i===-1 || j<0 || j>=order.length) return;
+  [order[i], order[j]] = [order[j], order[i]];
+  state.menuDirty = true;
+}
+/* Move an item up (dir=-1) or down (dir=+1) within its own category,
+   by swapping its position with its neighbor's inside state.menuDraft. */
+function moveMenuItemDraft(id, dir){
+  const draft = state.menuDraft;
+  const item = draft.find(m=>m.id===id);
+  if(!item) return;
+  const sameCatIdxs = [];
+  draft.forEach((m,i)=>{ if(m.category===item.category) sameCatIdxs.push(i); });
+  const pos = sameCatIdxs.indexOf(draft.indexOf(item));
+  const targetPos = pos + dir;
+  if(pos===-1 || targetPos<0 || targetPos>=sameCatIdxs.length) return;
+  const i1 = sameCatIdxs[pos], i2 = sameCatIdxs[targetPos];
+  [draft[i1], draft[i2]] = [draft[i2], draft[i1]];
+  state.menuDirty = true;
+}
+
+function renderMenuEditor(tc){
+  const draft = state.menuDraft;
+  if(!state.categoryOrderDraft) state.categoryOrderDraft = getCategoryOrder(draft);
+  syncCategoryOrderDraft();
+  const cats = state.categoryOrderDraft;
+  tc.innerHTML = `
+    <div class="menu-editor">
+      ${state.menuDirty ? `<div class="savebar"><span>You have unsaved menu changes.</span><button class="savebtn" id="saveMenuBtn">Save changes</button></div>` : ""}
+      ${cats.map((cat,ci)=>{
+        const items = draft.filter(m=>m.category===cat);
+        return `
+        <div style="margin-bottom:24px;">
+          <div class="cathead">
+            <h3 class="disp cat-h"><span class="catlabel mono">${ci+1}.</span> ${esc(cat)}</h3>
+            <div class="movebtns" title="Reorder category">
+              <button class="movebtn" data-catmove="${esc(cat)}" data-dir="-1" ${ci===0?"disabled":""} aria-label="Move category up">▲</button>
+              <button class="movebtn" data-catmove="${esc(cat)}" data-dir="1" ${ci===cats.length-1?"disabled":""} aria-label="Move category down">▼</button>
+            </div>
+          </div>
+          ${items.map((item,ii)=>`
+            <div class="edit-item" data-id="${item.id}">
+              <span class="mono" style="width:20px;text-align:center;color:var(--muted);font-size:12px;flex-shrink:0;">${ii+1}</span>
+              <div class="movebtns" title="Reorder item">
+                <button class="movebtn sm" data-itemmove="${item.id}" data-dir="-1" ${ii===0?"disabled":""} aria-label="Move item up">▲</button>
+                <button class="movebtn sm" data-itemmove="${item.id}" data-dir="1" ${ii===items.length-1?"disabled":""} aria-label="Move item down">▼</button>
+              </div>
+              <div class="edit-thumb">${item.image ? `<img src="${esc(item.image)}" alt="">` : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--mute)" stroke-width="1.8"><path d="M12 2 C6 6 6 14 12 22 C18 14 18 6 12 2 Z"/></svg>`}</div>
+              <input type="text" data-f="name" value="${esc(item.name)}" style="flex:1;min-width:120px;">
+              <input type="text" data-f="desc" value="${esc(item.desc)}" style="flex:1;min-width:140px;color:var(--mute);">
+              <input type="number" step="0.25" data-f="price" value="${item.price}" style="width:80px;">
+              <input type="text" data-f="image" value="${esc(item.image||'')}" placeholder="Image URL" style="width:130px;">
+              <label class="upload-label">Upload<input type="file" accept="image/*" data-upload="${item.id}" style="display:none;"></label>
+              <label class="stockLabel"><input type="checkbox" data-f="available" ${item.available?"checked":""}> In stock</label>
+              <button data-del="${item.id}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pink)" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0-1 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 6"/></svg></button>
+            </div>
+          `).join("")}
+        </div>
+      `;}).join("")}
+      <div class="addbox">
+        <p>Add a new item</p>
+        <div class="addrow">
+          <input type="text" id="newName" placeholder="Name" style="flex:1;min-width:120px;">
+          <input type="text" id="newDesc" placeholder="Description" style="flex:1;min-width:140px;">
+          <input type="number" id="newPrice" step="0.25" placeholder="Price" style="width:80px;">
+          <input type="text" id="newImage" placeholder="Image URL (optional)" style="width:150px;">
+          <input type="text" id="newCat" list="catlist" placeholder="Category" value="${esc(cats[0]||'')}" style="width:160px;">
+          <datalist id="catlist">${cats.map(c=>`<option value="${esc(c)}">`).join("")}</datalist>
+          <button class="addgo" id="addItemBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg> Add</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  tc.querySelectorAll(".edit-item").forEach(row=>{
+    const id = row.dataset.id;
+    row.querySelectorAll("[data-f]").forEach(input=>{
+      input.onchange=()=>{
+        const item = state.menuDraft.find(m=>m.id===id);
+        const f = input.dataset.f;
+        if(f==="price") item.price = parseFloat(input.value)||0;
+        else if(f==="available") item.available = input.checked;
+        else item[f] = input.value;
+        state.menuDirty = true;
+        renderMenuEditor(tc);
+      };
+    });
+  });
+  tc.querySelectorAll("[data-del]").forEach(btn=>btn.onclick=()=>{
+    state.menuDraft = state.menuDraft.filter(m=>m.id!==btn.dataset.del);
+    state.menuDirty = true;
+    renderMenuEditor(tc);
+  });
+  tc.querySelectorAll("[data-catmove]").forEach(btn=>btn.onclick=()=>{
+    moveCategoryDraft(btn.dataset.catmove, Number(btn.dataset.dir));
+    renderMenuEditor(tc);
+  });
+  tc.querySelectorAll("[data-itemmove]").forEach(btn=>btn.onclick=()=>{
+    moveMenuItemDraft(btn.dataset.itemmove, Number(btn.dataset.dir));
+    renderMenuEditor(tc);
+  });
+  tc.querySelectorAll("[data-upload]").forEach(fileInput=>{
+    fileInput.onchange=()=>{
+      const file = fileInput.files[0];
+      if(!file) return;
+      if(file.size > 800*1024){
+        alert("That photo is a bit large for browser storage — try one under ~800KB, or paste an image URL instead.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = ()=>{
+        const item = state.menuDraft.find(m=>m.id===fileInput.dataset.upload);
+        item.image = reader.result;
+        state.menuDirty = true;
+        renderMenuEditor(tc);
+      };
+      reader.readAsDataURL(file);
+    };
+  });
+  const addBtn = document.getElementById("addItemBtn");
+  if(addBtn) addBtn.onclick=()=>{
+    const name = document.getElementById("newName").value.trim();
+    const price = parseFloat(document.getElementById("newPrice").value)||0;
+    if(!name || !price) return;
+    state.menuDraft.push({
+      id:newId(),
+      category: document.getElementById("newCat").value.trim() || cats[0] || CATEGORY_ORDER[0],
+      name, desc: document.getElementById("newDesc").value.trim(), price,
+      image: document.getElementById("newImage").value.trim(), available:true
+    });
+    state.menuDirty = true;
+    renderMenuEditor(tc);
+  };
+  const saveBtn = document.getElementById("saveMenuBtn");
+  if(saveBtn) saveBtn.onclick=()=>{
+    state.menu = state.menuDraft;
+    saveCategoryOrder(state.categoryOrderDraft);
+    saveMenu();
+    // Push to the server so every other device (customer phones, other
+    // staff devices, Railway) sees this update in realtime too.
+    if(realtimeConnected) socket.emit("menu:update", state.menu);
+    state.menuDirty = false;
+    render();
+  };
+}
+
+function renderStaffTab(tc){
+  tc.innerHTML = `
+    <div class="addbox" style="margin-top:0;margin-bottom:18px;">
+      <p>Add a new staff member</p>
+      <div class="addrow">
+        <input type="text" id="newStaffName" placeholder="Full name" style="flex:1;min-width:120px;">
+        <input type="text" id="newStaffUsername" placeholder="Username" style="flex:1;min-width:120px;" autocomplete="off">
+        <input type="password" id="newStaffPassword" placeholder="Password (min 4 chars)" style="flex:1;min-width:140px;" autocomplete="new-password">
+        <select id="newStaffRole" style="border:1px solid var(--line);background:#08121f;color:#fff;border-radius:8px;padding:7px 8px;font-size:12px;">
+          <option value="staff">Staff</option>
+          <option value="owner">Owner</option>
+        </select>
+        <button class="addgo" id="createStaffBtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg> Create</button>
+      </div>
+      ${state.staffFormError ? `<p style="color:var(--danger);font-size:12px;margin:10px 0 0;">${esc(state.staffFormError)}</p>` : ""}
+    </div>
+    <div id="staffListWrap">${renderStaffListHTML()}</div>
+  `;
+
+  const createBtn = document.getElementById("createStaffBtn");
+  createBtn.onclick=()=>{
+    const name = document.getElementById("newStaffName").value.trim();
+    const username = document.getElementById("newStaffUsername").value.trim();
+    const password = document.getElementById("newStaffPassword").value;
+    const role = document.getElementById("newStaffRole").value;
+    if(!username || !password){ state.staffFormError="Username and password are required."; renderStaffTab(tc); return; }
+    socket.emit("staff:create", {token: state.staffToken, name, username, password, role}, (res)=>{
+      if(res && res.ok){
+        state.staffFormError = null;
+        loadStaffList(tc);
+      }else{
+        state.staffFormError = (res && res.error) || "Could not create staff member.";
+        renderStaffTab(tc);
+      }
+    });
+  };
+
+  loadStaffList(tc);
+}
+
+function renderStaffListHTML(){
+  if(!state.staffList) return `<p style="color:var(--muted);font-size:13px;">Loading staff…</p>`;
+  if(!state.staffList.length) return `<p style="color:var(--muted);font-size:13px;">No staff accounts yet.</p>`;
+  return state.staffList.map(u=>`
+    <div class="edit-item" data-username="${esc(u.username)}">
+      <div style="flex:1;min-width:120px;">
+        <div style="font-weight:700;font-size:13px;">${esc(u.name)} ${u.username===state.staffUser.username ? '<span class="mono" style="color:var(--cyan);font-size:11px;">(you)</span>' : ''}</div>
+        <div class="mono" style="color:var(--muted);font-size:11px;">@${esc(u.username)} · ${esc(u.role)}</div>
+      </div>
+      <input type="password" data-newpass placeholder="New password" style="width:150px;" autocomplete="new-password">
+      <button class="upload-label" data-resetpass="${esc(u.username)}">Set password</button>
+      ${u.username!==state.staffUser.username ? `<button data-deluser="${esc(u.username)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--pink)" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0-1 14a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2L6 6"/></svg></button>` : ""}
+    </div>
+  `).join("");
+}
+
+function loadStaffList(tc){
+  socket.emit("staff:list", {token: state.staffToken}, (res)=>{
+    if(res && res.ok){
+      state.staffList = res.users;
+    }else{
+      state.staffList = [];
+    }
+    const wrap = document.getElementById("staffListWrap");
+    if(wrap){
+      wrap.innerHTML = renderStaffListHTML();
+      wireStaffListEvents(tc);
+    }
+  });
+}
+
+function wireStaffListEvents(tc){
+  document.querySelectorAll("[data-resetpass]").forEach(btn=>{
+    btn.onclick=()=>{
+      const row = btn.closest("[data-username]");
+      const pass = row.querySelector("[data-newpass]").value;
+      if(!pass || pass.length<4){ alert("Password must be at least 4 characters."); return; }
+      socket.emit("staff:changePassword", {token: state.staffToken, targetUsername: btn.dataset.resetpass, newPassword: pass}, (res)=>{
+        if(res && res.ok){ alert("Password updated."); row.querySelector("[data-newpass]").value=""; }
+        else alert((res && res.error) || "Could not update password.");
+      });
+    };
+  });
+  document.querySelectorAll("[data-deluser]").forEach(btn=>{
+    btn.onclick=()=>{
+      if(!confirm(`Remove staff account "${btn.dataset.deluser}"?`)) return;
+      socket.emit("staff:delete", {token: state.staffToken, targetUsername: btn.dataset.deluser}, (res)=>{
+        if(res && res.ok) loadStaffList(tc);
+        else alert((res && res.error) || "Could not remove staff member.");
+      });
+    };
+  });
+}
+
+function renderAccountTab(tc){
+  tc.innerHTML = `
+    <div class="addbox" style="margin-top:0;max-width:420px;">
+      <p>Change your password</p>
+      <div class="addrow">
+        <input type="password" id="accNewPass" placeholder="New password (min 4 chars)" style="flex:1;min-width:180px;" autocomplete="new-password">
+        <button class="addgo" id="accSaveBtn">Update password</button>
+      </div>
+      <p style="color:var(--muted);font-size:12px;margin:10px 0 0;">Signed in as <strong>${esc(state.staffUser.name)}</strong> (@${esc(state.staffUser.username)}, ${esc(state.staffUser.role)}).</p>
+      <p id="accMsg" style="font-size:12px;margin:8px 0 0;"></p>
+    </div>
+  `;
+  document.getElementById("accSaveBtn").onclick=()=>{
+    const pass = document.getElementById("accNewPass").value;
+    const msg = document.getElementById("accMsg");
+    if(!pass || pass.length<4){ msg.style.color="var(--danger)"; msg.textContent="Password must be at least 4 characters."; return; }
+    socket.emit("staff:changePassword", {token: state.staffToken, targetUsername: state.staffUser.username, newPassword: pass}, (res)=>{
+      if(res && res.ok){ msg.style.color="var(--lime)"; msg.textContent="Password updated."; document.getElementById("accNewPass").value=""; }
+      else{ msg.style.color="var(--danger)"; msg.textContent=(res && res.error) || "Could not update password."; }
+    });
+  };
+}
+
+/* seed default menu if empty */
+
+// Backward-compatible payment fields for existing orders.
+state.orders.forEach(o=>{
+  if(!o.paymentStatus) o.paymentStatus = "unpaid";
+});
+saveOrders();
+
+if(!localStorage.getItem("jb_menu")) saveMenu();
+
+render();
+</script>
+</body>
+</html>
