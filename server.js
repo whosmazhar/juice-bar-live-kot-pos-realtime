@@ -47,6 +47,7 @@ function publicUser(u){
   return { username: u.username, name: u.name, role: u.role };
 }
 
+<<<<<<< HEAD
 function normalizePhone(phone){
   return String(phone || "").replace(/[^0-9+]/g, "").trim();
 }
@@ -67,6 +68,8 @@ function publicMember(m){
   return { phone: m.phone, name: m.name, discountType: m.discountType, discountValue: m.discountValue };
 }
 
+=======
+>>>>>>> 4810a1d68b275a3ed425dfec904aeb63e7ce2765
 const app = express();
 app.use(express.json({ limit: "2mb" }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -78,7 +81,10 @@ let db;
 let ordersCollection;
 let menuCollection;
 let staffCollection;
+<<<<<<< HEAD
 let membersCollection;
+=======
+>>>>>>> 4810a1d68b275a3ed425dfec904aeb63e7ce2765
 
 async function getMenu(){
   const doc = await menuCollection.findOne({ _id: "current" });
@@ -95,6 +101,7 @@ async function saveMenu(items){
 
 function sanitizeOrder(order){
   if(!order || typeof order !== "object") return null;
+<<<<<<< HEAD
   const items = Array.isArray(order.items) ? order.items : [];
   // subtotal is the pre-discount cart total. Older clients / records only
   // ever sent "total", so fall back to that when subtotal is missing.
@@ -114,6 +121,14 @@ function sanitizeOrder(order){
     discountValue,
     discountAmount,
     total,
+=======
+  return {
+    id: String(order.id || ""),
+    items: Array.isArray(order.items) ? order.items : [],
+    notes: String(order.notes || ""),
+    customerName: String(order.customerName || ""),
+    total: Number(order.total || 0),
+>>>>>>> 4810a1d68b275a3ed425dfec904aeb63e7ce2765
     status: ["pending","preparing","ready","completed","cancelled"].includes(order.status) ? order.status : "pending",
     createdAt: Number(order.createdAt || Date.now()),
     paymentStatus: order.paymentStatus === "paid" ? "paid" : "unpaid",
@@ -144,8 +159,11 @@ async function start(){
   menuCollection = db.collection("menu");
   staffCollection = db.collection("staff");
   await staffCollection.createIndex({ username: 1 }, { unique: true });
+<<<<<<< HEAD
   membersCollection = db.collection("members");
   await membersCollection.createIndex({ phone: 1 }, { unique: true });
+=======
+>>>>>>> 4810a1d68b275a3ed425dfec904aeb63e7ce2765
 
   const ownerExists = await staffCollection.findOne({ role: "owner" });
   if(!ownerExists){
@@ -305,6 +323,7 @@ async function start(){
       }catch(err){ console.error("staff:delete",err); if(ack) ack({ok:false,error:"Server error"}); }
     });
 
+<<<<<<< HEAD
     // Any connected client (customer or staff) can look up a phone number
     // at checkout to see if it belongs to a registered member and what
     // discount they get. Only name/discount info is returned, nothing else.
@@ -376,6 +395,8 @@ async function start(){
       }catch(err){ console.error("member:delete",err); if(ack) ack({ok:false,error:"Server error"}); }
     });
 
+=======
+>>>>>>> 4810a1d68b275a3ed425dfec904aeb63e7ce2765
     socket.on("orders:request", async ()=>{
       try { socket.emit("orders:snapshot", await getAllOrders()); }
       catch(err){ console.error(err); }
