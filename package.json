@@ -1,0 +1,16 @@
+{
+  "name": "juice-bar-kot-pos-realtime",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Juice Bar futuristic BDT KOT/POS with MongoDB and realtime customer order tracking",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mongodb": "^6.12.0",
+    "socket.io": "^4.8.1"
+  }
+}
